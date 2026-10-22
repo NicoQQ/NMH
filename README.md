@@ -21,7 +21,7 @@ Sitio estático de 12 páginas, sin compilación ni dependencias, listo para Git
 | `assets/estilos.css` | Estilos compartidos |
 | `assets/sitio.js` | Botones de copiar y filtro de proyectos |
 | `assets/img/` | Logo (versión clara y azul), ícono de 192 px, fotos de proyectos y sus versiones de 640 px para celular |
-| `CNAME` | Dominio personalizado (`www.nmh.com.co`) |
+| `CNAME` | Dominio personalizado (`nmh.com.co`) |
 | `sitemap.xml`, `robots.txt` | Mapa del sitio con páginas e imágenes, e instrucciones para buscadores |
 | `.nojekyll` | Evita que GitHub procese el sitio con Jekyll |
 
@@ -56,7 +56,7 @@ Ambos tienen fondo transparente y se obtuvieron del brochure. Si tienen el logo 
 3. Espere uno o dos minutos. GitHub muestra la dirección provisional, del tipo `https://USUARIO.github.io/nmh-web/`. Ábrala para revisar el sitio.
 
 ### 5. Conectar el dominio
-1. En la misma pantalla de **Pages**, en **Custom domain**, escriba `www.nmh.com.co` y haga clic en **Save**.
+1. En la misma pantalla de **Pages**, en **Custom domain**, escriba `nmh.com.co` (sin www) y haga clic en **Save**.
 2. En el panel del proveedor del dominio (donde se compró `nmh.com.co`), cree los registros DNS de la tabla siguiente.
 3. La propagación puede tardar hasta 24 horas. Cuando GitHub muestre «DNS check successful», marque **Enforce HTTPS**.
 4. Opcional y recomendado: en la configuración de la cuenta de GitHub, en **Pages**, agregue `nmh.com.co` como dominio verificado para evitar que otra cuenta lo use.
@@ -81,7 +81,7 @@ Abra el archivo en GitHub, haga clic en el lápiz (**Edit**), cambie el texto y 
 
 1. Entre a [Google Search Console](https://search.google.com/search-console) y agregue una propiedad de tipo **Dominio** con `nmh.com.co`.
 2. Google entrega un registro **TXT**: créelo en el DNS del dominio y haga clic en **Verificar**.
-3. En **Sitemaps**, envíe `https://www.nmh.com.co/sitemap.xml`.
+3. En **Sitemaps**, envíe `https://nmh.com.co/sitemap.xml`.
 4. En **Inspección de URLs**, revise el inicio y haga clic en **Solicitar indexación**.
 5. Valide los datos estructurados con la [Prueba de resultados enriquecidos](https://search.google.com/test/rich-results) y el [Validador de Schema.org](https://validator.schema.org/).
 6. Cada vez que cambie contenido importante, actualice la fecha `lastmod` del sitemap y vuelva a enviarlo.
@@ -90,19 +90,23 @@ La aparición en Google puede tardar de días a semanas después de la verificac
 
 ## Registros DNS
 
-| Tipo | Nombre | Valor |
-| --- | --- | --- |
-| CNAME | `www` | `USUARIO.github.io` (usuario u organización dueña del repositorio, sin el nombre del repositorio) |
-| A | `@` | 185.199.108.153 |
-| A | `@` | 185.199.109.153 |
-| A | `@` | 185.199.110.153 |
-| A | `@` | 185.199.111.153 |
-| AAAA | `@` | 2606:50c0:8000::153 |
-| AAAA | `@` | 2606:50c0:8001::153 |
-| AAAA | `@` | 2606:50c0:8002::153 |
-| AAAA | `@` | 2606:50c0:8003::153 |
+El sitio se publica en el dominio principal `nmh.com.co`. En el panel del proveedor del dominio cree estos registros:
 
-Los registros A y AAAA hacen que `nmh.com.co` (sin www) también funcione. No borre los registros MX del correo: conviven con los de la web.
+| Tipo | Nombre | Valor | Uso |
+| --- | --- | --- | --- |
+| A | `@` | 185.199.108.153 | Obligatorio |
+| A | `@` | 185.199.109.153 | Obligatorio |
+| A | `@` | 185.199.110.153 | Obligatorio |
+| A | `@` | 185.199.111.153 | Obligatorio |
+| AAAA | `@` | 2606:50c0:8000::153 | Recomendado (IPv6) |
+| AAAA | `@` | 2606:50c0:8001::153 | Recomendado (IPv6) |
+| AAAA | `@` | 2606:50c0:8002::153 | Recomendado (IPv6) |
+| AAAA | `@` | 2606:50c0:8003::153 | Recomendado (IPv6) |
+| CNAME | `www` | `USUARIO.github.io` | Recomendado: quien escriba `www.nmh.com.co` llega a `nmh.com.co` |
+
+- `USUARIO` es el usuario u organización de GitHub dueña del repositorio, sin el nombre del repositorio.
+- Si el dominio ya tiene registros A en `@` que apuntan a otro servidor (una página de parqueo o un hosting anterior), elimínelos: deben quedar solo los cuatro de GitHub.
+- No borre los registros MX ni TXT del correo (`michael.miranda@nmh.com.co`, `hermes.ramirez@nmh.com.co`): conviven con los de la web.
 
 Fuente: [GitHub Docs, Managing a custom domain for your GitHub Pages site](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site).
 
