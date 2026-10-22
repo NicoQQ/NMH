@@ -401,6 +401,12 @@
     // Meses en el eje X
     var d0 = new Date(P.starts[0]), lastT = P.ends[n - 1];
     var mt = Date.UTC(d0.getUTCFullYear(), d0.getUTCMonth() + 1, 1);
+    if (d0.getUTCDate() > 1 && X(C.xOf(mt)) - X(0) > 40) {
+      // Mes de inicio de la obra, sin marca (la obra no empieza el día 1)
+      var l0 = svgEl("text", { x: X(0) + 4, y: H - m.b + 20 });
+      l0.textContent = MESES[d0.getUTCMonth()];
+      ax.appendChild(l0);
+    }
     for (; mt < lastT; mt = Date.UTC(new Date(mt).getUTCFullYear(), new Date(mt).getUTCMonth() + 1, 1)) {
       var mx = X(C.xOf(mt));
       ax.appendChild(svgEl("line", { x1: mx, x2: mx, y1: H - m.b, y2: H - m.b + 6 }));
@@ -716,6 +722,18 @@
     host.addEventListener("scroll", hideTip, { passive: true });
   }
 
+  /** Si hay pocas semanas, ensancha las columnas para llenar el ancho disponible (máximo 64 px). */
+  function fitColumns() {
+    var host = $("gantt");
+    if (!host || !D) return;
+    host.style.removeProperty("--cw");
+    var cs = getComputedStyle(host);
+    var lw = parseFloat(cs.getPropertyValue("--lw")) || 0;
+    var cw = parseFloat(cs.getPropertyValue("--cw")) || 0;
+    var fit = Math.floor((host.clientWidth - lw - 2) / D.C.n);
+    if (fit > cw) host.style.setProperty("--cw", Math.min(fit, 64) + "px");
+  }
+
   function getVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
 
   function applyFilters() {
@@ -820,6 +838,7 @@
     renderCurveTable();
     renderNote();
     buildGantt();
+    fitColumns();
     wireToolbar();
     applyFilters();
   }
@@ -861,7 +880,7 @@
     window.addEventListener("resize", function () {
       if (!D) return;
       clearTimeout(rt);
-      rt = setTimeout(function () { var nw = $("curva").clientWidth; if (nw !== w) { w = nw; renderCurve(); } }, 150);
+      rt = setTimeout(function () { var nw = $("curva").clientWidth; if (nw !== w) { w = nw; renderCurve(); fitColumns(); } }, 150);
     });
     window.addEventListener("scroll", hideTip, { passive: true });
     var mq = window.matchMedia("(prefers-color-scheme: dark)");
