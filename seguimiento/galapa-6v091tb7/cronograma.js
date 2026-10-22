@@ -61,6 +61,12 @@
     return out.charAt(0).toUpperCase() + out.slice(1);
   }
 
+  /** Nombre corto para la lista: omite «Suministro e instalación de», que encabeza casi todos los ítems. */
+  function shortName(name) {
+    var s = name.replace(/^sumin\S*,?\s+(transporte\s+)?e\s+instalaci[oó]n\s+(de\s+)?/i, "");
+    return s && s !== name ? s.charAt(0).toUpperCase() + s.slice(1) : name;
+  }
+
   function serialToUTC(n) { return (Math.floor(n) - 25569) * DAY; }
   function toDate(v, year) {
     if (v == null || v === "") return null;
@@ -173,8 +179,9 @@
           var f = asFraction(toNum(v));
           return f ? { x: f } : null;
         });
+        var full = smartCase(txt(r, cAct));
         var it = {
-          code: code, name: smartCase(txt(r, cAct)), ch: cur,
+          code: code, name: full, short: shortName(full), ch: cur,
           wRaw: cW >= 0 ? toNum(val(r, cW)) : null,
           dur: cDur >= 0 ? toNum(val(r, cDur)) : null,
           cells: cells
@@ -617,11 +624,11 @@
         var r = el("div", "g-row item");
         var l = el("div", "g-left");
         l.appendChild(el("span", "g-code", it.code));
-        l.appendChild(el("span", "g-name", it.name));
+        l.appendChild(el("span", "g-name", it.short));
         var pc = el("span", "g-pct" + (it.exe > 0 ? "" : " zero"), pct(Math.min(it.exe, 9.99), 0));
         if (it.exe > 1.0001) pc.className += " warn";
         l.appendChild(pc);
-        l.appendChild(el("span", "vh", ". " + itemSummary(it)));
+        l.appendChild(el("span", "vh", ". " + (it.short !== it.name ? it.name + ". " : "") + itemSummary(it)));
         l.dataset.tipItem = String(P.items.indexOf(it));
         r.appendChild(l);
         it.cells.forEach(function (c, k) {
@@ -729,7 +736,7 @@
       });
       var showCh = inCh && (visibleItems > 0 || (!filtering));
       ch.row.hidden = !showCh;
-      var open = filtering ? true : ch.open;
+      var open = ch.open;
       ch.btn.setAttribute("aria-expanded", String(open));
       ch.items.forEach(function (it) { it.row.hidden = !(showCh && open && it.match); });
       if (showCh) any = true;
@@ -753,9 +760,10 @@
     if (wireToolbar.done) return;
     wireToolbar.done = true;
     var t;
-    $("f-buscar").addEventListener("input", function (e) { clearTimeout(t); var v = e.target.value; t = setTimeout(function () { G.q = v; applyFilters(); }, 120); });
-    sel.addEventListener("change", function (e) { G.ch = e.target.value; applyFilters(); });
-    $("f-estado").addEventListener("change", function (e) { G.st = e.target.value; applyFilters(); });
+    function openAll() { D.P.chapters.forEach(function (c) { c.open = true; }); }
+    $("f-buscar").addEventListener("input", function (e) { clearTimeout(t); var v = e.target.value; t = setTimeout(function () { G.q = v; openAll(); applyFilters(); }, 120); });
+    sel.addEventListener("change", function (e) { G.ch = e.target.value; openAll(); applyFilters(); });
+    $("f-estado").addEventListener("change", function (e) { G.st = e.target.value; openAll(); applyFilters(); });
     $("f-expandir").addEventListener("click", function () { D.P.chapters.forEach(function (c) { c.open = true; }); applyFilters(); });
     $("f-contraer").addEventListener("click", function () { D.P.chapters.forEach(function (c) { c.open = false; }); applyFilters(); });
     $("f-valores").addEventListener("change", function (e) { $("gantt").classList.toggle("show-values", e.target.checked); });
@@ -855,6 +863,7 @@
       clearTimeout(rt);
       rt = setTimeout(function () { var nw = $("curva").clientWidth; if (nw !== w) { w = nw; renderCurve(); } }, 150);
     });
+    window.addEventListener("scroll", hideTip, { passive: true });
     var mq = window.matchMedia("(prefers-color-scheme: dark)");
     if (mq.addEventListener) mq.addEventListener("change", function () { if (D) renderCurve(); });
     load();
