@@ -531,3 +531,5 @@ ul, ol { margin: 0; padding: 0; }
   .tabs a[aria-current="page"]::after { left: 6px; right: 6px; }
 }
 img { height: auto; }
+/* El atributo hidden siempre oculta (los filtros lo usan sobre tarjetas con display propio) */
+[hidden] { display: none !important; }
