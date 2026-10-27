@@ -17,6 +17,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var pct1 = new Intl.NumberFormat("es-CO", { style: "percent", minimumFractionDigits: 1, maximumFractionDigits: 1 });
   var pct0 = new Intl.NumberFormat("es-CO", { style: "percent", maximumFractionDigits: 0 });
+  var pct2 = new Intl.NumberFormat("es-CO", { style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 });
   var num1 = new Intl.NumberFormat("es-CO", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   var D; // datos calculados
 
@@ -36,7 +37,7 @@
     for (var k in attrs) if (Object.prototype.hasOwnProperty.call(attrs, k)) e.setAttribute(k, attrs[k]);
     return e;
   }
-  function pct(v, digits) { return (digits === 0 ? pct0 : pct1).format(v); }
+  function pct(v, digits) { return (digits === 0 ? pct0 : digits === 2 ? pct2 : pct1).format(v); }
   function pp(v) { return num1.format(v * 100) + " puntos"; }
   function pad(n) { return (n < 10 ? "0" : "") + n; }
   function dm(t) { var d = new Date(t); return pad(d.getUTCDate()) + "/" + pad(d.getUTCMonth() + 1); }
@@ -558,7 +559,7 @@
   function itemSummary(it) {
     var x = [], p = [];
     it.cells.forEach(function (c, k) { if (c && c.x) x.push("S" + (k + 1)); else if (c && c.p) p.push("S" + (k + 1)); });
-    return "Avance del ítem " + pct(it.exe, 0) + ". " +
+    return "Avance del ítem " + pct(it.exe, 0) + ". Aporta " + pct(it.w, 2) + " del avance total al terminarse. " +
       (x.length ? "Ejecutado en " + x.join(", ") + ". " : "") +
       (p.length ? "Programado en " + p.join(", ") + "." : "");
   }
@@ -588,7 +589,14 @@
     }
     head.appendChild(months);
     var days = el("div", "g-row g-days");
-    days.appendChild(el("div", "g-left"));
+    var dl = el("div", "g-left");
+    var hc = el("div", "g-hcols");
+    hc.appendChild(el("span", null, "Avance"));
+    var hw = el("span", null, "Aporte");
+    hw.title = "Lo que suma el ítem al avance total cuando se termina";
+    hc.appendChild(hw);
+    dl.appendChild(hc);
+    days.appendChild(dl);
     for (k = 0; k < n; k++) {
       var dc = el("div", null, String(new Date(P.starts[k]).getUTCDate()));
       dc.title = weekLabel(k);
@@ -609,8 +617,11 @@
       btn.lastChild.setAttribute("aria-hidden", "true");
       btn.appendChild(el("span", "g-code", ch.code));
       btn.appendChild(el("span", "g-name", ch.name));
-      btn.appendChild(el("span", "g-pct" + (ch.exe > 0 ? "" : " zero"), pct(ch.exe, 0)));
-      btn.appendChild(el("span", "vh", ". Peso en el alcance total " + pct(ch.w) + ". Avance del capítulo " + pct(ch.exe, 0) + "."));
+      var cn = el("span", "g-nums");
+      cn.appendChild(el("span", "g-pct" + (ch.exe > 0 ? "" : " zero"), pct(ch.exe, 0)));
+      cn.appendChild(el("span", "g-w", pct(ch.w, 2)));
+      btn.appendChild(cn);
+      btn.appendChild(el("span", "vh", ". Avance del capítulo " + pct(ch.exe, 0) + ". Aporta " + pct(ch.w, 2) + " del avance total."));
       btn.addEventListener("click", function () { ch.open = !ch.open; applyFilters(); });
       left.appendChild(btn);
       left.dataset.tipChap = String(P.chapters.indexOf(ch));
@@ -631,9 +642,12 @@
         var l = el("div", "g-left");
         l.appendChild(el("span", "g-code", it.code));
         l.appendChild(el("span", "g-name", it.short));
+        var nums = el("span", "g-nums");
         var pc = el("span", "g-pct" + (it.exe > 0 ? "" : " zero"), pct(Math.min(it.exe, 9.99), 0));
         if (it.exe > 1.0001) pc.className += " warn";
-        l.appendChild(pc);
+        nums.appendChild(pc);
+        nums.appendChild(el("span", "g-w", pct(it.w, 2)));
+        l.appendChild(nums);
         l.appendChild(el("span", "vh", ". " + (it.short !== it.name ? it.name + ". " : "") + itemSummary(it)));
         l.dataset.tipItem = String(P.items.indexOf(it));
         r.appendChild(l);
@@ -694,7 +708,8 @@
           else rows.push(el("div", "t-s", "Sin actividad en esta semana."));
         }
         rows.push(tipRow(pct(it.exe, 0), "avance acumulado del ítem"));
-        rows.push(tipRow(pct(it.w, 2), "peso en el alcance total"));
+        rows.push(tipRow(pct(it.w, 2), "aporta al avance total al terminarse"));
+        if (it.exe < 0.9999) rows.push(tipRow(pct(it.w * Math.max(0, 1 - it.exe), 2), "le falta aportar"));
         if (it.dur) rows.push(tipRow(String(Math.round(it.dur)), "días de duración"));
       } else if (row.dataset.chap != null) {
         var ch = P.chapters[+row.dataset.chap];
@@ -708,7 +723,8 @@
           if (!s.x && !s.p && !s.l) rows.push(el("div", "t-s", "Sin actividad en esta semana."));
         }
         rows.push(tipRow(pct(ch.exe, 0), "avance del capítulo"));
-        rows.push(tipRow(pct(ch.w), "peso en el alcance total"));
+        rows.push(tipRow(pct(ch.w, 2), "aporta al avance total al terminarse"));
+        if (ch.exe < 0.9999) rows.push(tipRow(pct(ch.w * Math.max(0, 1 - ch.exe), 2), "le falta aportar"));
       } else { hideTip(); return; }
       showTip(rows, x, y);
     }

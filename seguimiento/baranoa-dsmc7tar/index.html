@@ -166,11 +166,11 @@
   .count { font-size: var(--small); color: var(--muted); margin-bottom: 10px; }
 
   .gantt {
-    --lw: 300px; --cw: 32px;
+    --lw: 360px; --cw: 30px;
     position: relative; overflow: auto; max-height: min(78vh, 980px);
     border: 1px solid var(--rule); background: var(--surface); overscroll-behavior: contain;
   }
-  @media (max-width: 720px) { .gantt { --lw: 184px; --cw: 28px; max-height: 72vh; } }
+  @media (max-width: 720px) { .gantt { --lw: 200px; --cw: 28px; max-height: 72vh; } }
   .g-inner { position: relative; min-width: 100%; }
   .g-row { display: grid; align-items: stretch; }
   .g-left {
@@ -202,6 +202,11 @@
   .g-name { flex: 1 1 auto; min-width: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: break-word; hyphens: auto; }
   .g-pct { flex: none; font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; min-width: 3.2em; }
   .g-pct.zero { color: var(--muted); font-weight: 500; }
+  .g-nums { flex: none; display: flex; align-items: baseline; gap: 10px; }
+  .g-w { min-width: 3.9em; text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); font-weight: 500; }
+  .g-hcols { display: flex; gap: 10px; margin-left: auto; align-self: flex-start; font-size: 0.75rem; font-weight: 600; color: var(--muted); }
+  .g-hcols span:first-child { min-width: 3.2em; text-align: right; }
+  .g-hcols span:last-child { min-width: 3.9em; text-align: right; cursor: help; }
   .g-row.chap .g-left { padding: 0; }
   .g-toggle {
     display: flex; align-items: center; gap: 8px; width: 100%; min-height: 40px; padding: 6px 10px 6px 12px;
@@ -240,10 +245,13 @@
     .g-toggle { padding-left: 8px; padding-right: 8px; gap: 6px; font-size: 0.75rem; }
     .g-code { min-width: 2.1em; }
     .g-pct { min-width: 2.6em; }
+    .g-nums, .g-hcols { flex-direction: column; align-items: flex-end; gap: 0; }
+    .g-w, .g-hcols span:last-child { min-width: 0; font-size: 0.6875rem; }
+    .g-hcols span:first-child { min-width: 0; }
     .g-caret { margin-right: 0; }
   }
   @media (max-width: 480px) {
-    .gantt { --lw: 156px; --cw: 26px; }
+    .gantt { --lw: 168px; --cw: 26px; }
     .g-left, .g-toggle { gap: 5px; padding-left: 6px; padding-right: 6px; font-size: 0.7188rem; }
     .g-code { min-width: 1.9em; }
     .g-pct { min-width: 2.4em; }
@@ -308,7 +316,7 @@
   <section class="block needs-data" aria-labelledby="gantt-titulo">
     <div class="wrap">
       <h2 id="gantt-titulo">Diagrama de Gantt</h2>
-      <p class="intro">Cada fila es un ítem del presupuesto; en la lista se omite «Suministro e instalación de». Pase el cursor o toque una semana para ver el detalle con el nombre completo.</p>
+      <p class="intro">Cada fila es un ítem del presupuesto; en la lista se omite «Suministro e instalación de». La columna «Aporte» indica cuánto suma cada ítem al avance total cuando se termina. Pase el cursor o toque una semana para ver el detalle con el nombre completo.</p>
       <div class="toolbar" role="search">
         <label class="vh" for="f-buscar">Buscar ítem o actividad</label>
         <input type="search" id="f-buscar" placeholder="Buscar ítem o actividad" autocomplete="off">
