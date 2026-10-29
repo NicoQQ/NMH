@@ -533,3 +533,94 @@ ul, ol { margin: 0; padding: 0; }
 img { height: auto; }
 /* El atributo hidden siempre oculta (los filtros lo usan sobre tarjetas con display propio) */
 [hidden] { display: none !important; }
+
+/* ---- Mejoras 2026-10: accesibilidad, conversión y señales visuales ---- */
+.vh { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+picture { display: contents; }
+picture > source { display: none; }
+
+/* Foco visible: azul oscuro sobre fondos claros, verde sobre fondos azules */
+:root { --focus: #132D46; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --focus: #35D9A6; } }
+:root[data-theme="dark"] { --focus: #35D9A6; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.site-head :focus-visible, .hero-home :focus-visible, .cta :focus-visible, .site-foot :focus-visible, .wa-float:focus-visible { outline-color: var(--teal); }
+.wa-float:focus-visible { outline-color: var(--focus); }
+.skip:focus-visible { outline-color: #FFFFFF; }
+
+/* Áreas de toque de al menos 32 px */
+.site-foot ul { gap: 2px; }
+.crumbs { align-items: center; }
+.site-foot ul a, .crumbs a, .more a, .section-intro a, .quote-needs h3 a { display: inline-flex; align-items: center; min-height: 32px; }
+.site-foot ul li { min-height: 32px; display: flex; align-items: center; }
+.line ul a { display: inline-block; padding-block: 4px; }
+.table-scroll:focus-visible { outline-offset: 4px; }
+
+/* Botón Cotizar en el encabezado */
+.site-head .wrap { justify-content: flex-start; }
+.site-head .tabs { margin-left: auto; margin-right: 0; }
+.nav-cta {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 18px; margin-left: 20px;
+  border-radius: 4px; background: var(--teal); color: #0A1520; font-weight: 700; font-size: 0.9375rem; text-decoration: none; white-space: nowrap;
+}
+.nav-cta:hover { background: #22D7A3; }
+@media (max-width: 720px) {
+  .nav-cta { order: 2; margin-left: auto; padding: 6px 16px; font-size: 0.9063rem; }
+  .site-head .tabs { order: 3; margin-left: -8px; }
+}
+
+/* Cotizar cada servicio por WhatsApp */
+.svc-cta { margin-top: 16px; }
+.svc-cta a {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 16px; border-radius: 4px;
+  border: 1.5px solid var(--link); color: var(--link); font-weight: 600; font-size: 0.9375rem; text-decoration: none;
+}
+.svc-cta a:hover { background: rgba(3, 122, 90, 0.08); }
+.svc-cta svg { width: 20px; height: 20px; flex: none; }
+
+/* WhatsApp flotante en celular */
+.wa-float { display: none; }
+@media (max-width: 720px) {
+  .wa-float {
+    display: inline-flex; align-items: center; gap: 8px; position: fixed; z-index: 25;
+    right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px));
+    min-height: 48px; padding: 0 18px 0 14px; border-radius: 999px;
+    background: var(--teal); color: #0A1520; font-weight: 700; font-size: 0.9375rem; text-decoration: none;
+    box-shadow: 0 6px 20px rgba(10, 21, 32, 0.3);
+  }
+  .wa-float svg { width: 22px; height: 22px; }
+  .site-foot a.wa-float, .site-foot a.wa-float:hover { color: #0A1520; text-decoration: none; }
+  .site-foot a.wa-float:hover { background: #22D7A3; }
+  .site-foot .wrap { padding-bottom: 96px; }
+}
+
+/* Íconos de las líneas de servicio */
+.line-ico {
+  display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; margin-bottom: 12px;
+  border-radius: 8px; background: rgba(3, 196, 143, 0.13); color: var(--link);
+}
+.line-ico svg { width: 24px; height: 24px; }
+
+/* Tres estilos distintos: saltos (↓), filtros (botones) y etiquetas (enlaces) */
+.toc { gap: 4px 24px; }
+.toc a {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0; border: 0; border-radius: 0; background: none;
+  color: var(--link); font-weight: 600; font-size: 0.9375rem; text-decoration: underline; text-underline-offset: 0.2em;
+}
+.toc a::after { content: "↓"; text-decoration: none; display: inline-block; font-weight: 700; }
+.toc a:hover { color: var(--fg); border: 0; }
+.chips { gap: 2px 16px; }
+.chips a, .chips span {
+  display: inline-flex; align-items: center; min-height: 28px; padding: 0; border: 0; border-radius: 0; background: none;
+  font-size: 0.8125rem; font-weight: 600;
+}
+.chips a { color: var(--link); text-decoration: underline; text-underline-offset: 0.2em; }
+.chips span { color: var(--muted); }
+.chips a:hover { color: var(--fg); }
+
+/* Páginas de servicio más cortas en celular */
+@media (max-width: 720px) {
+  .page-head { padding-block: 32px 28px; }
+  .page-head.with-img .head-img { aspect-ratio: 16 / 7; }
+  .toc { margin-top: 18px; }
+}
