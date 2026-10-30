@@ -681,8 +681,13 @@
       mk.title = title;
       days.appendChild(mk);
     }
-    if (C.cut >= 0) { vline(C.cutX); mark(C.cutX, "", "Corte", "Corte: " + dmy(C.cutEndT - DAY)); }
-    if (C.metaX > 0 && C.metaX <= n) { vline(C.metaX, "meta"); mark(C.metaX, "meta", "Meta", "Meta " + pct(C.meta, 0) + " al " + dmy(C.metaDate)); }
+    // Si el corte y la meta quedan a menos de semana y media, las etiquetas se separan hacia lados opuestos
+    var showMeta = C.metaX > 0 && C.metaX <= n;
+    var near = C.cut >= 0 && showMeta && Math.abs(C.metaX - C.cutX) < 1.6;
+    var cutSide = near ? (C.metaX >= C.cutX ? " to-left" : " to-right") : "";
+    var metaSide = near ? (C.metaX >= C.cutX ? " to-right" : " to-left") : "";
+    if (C.cut >= 0) { vline(C.cutX); mark(C.cutX, cutSide.trim(), "Corte", "Corte: " + dmy(C.cutEndT - DAY)); }
+    if (showMeta) { vline(C.metaX, "meta"); mark(C.metaX, "meta" + metaSide, "Meta", "Meta " + pct(C.meta, 0) + " al " + dmy(C.metaDate)); }
     inner.appendChild(body);
     var empty = el("p", "g-empty", "No hay ítems que coincidan con el filtro.");
     empty.hidden = true;
