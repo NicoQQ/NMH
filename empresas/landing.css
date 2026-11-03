@@ -1,5 +1,5 @@
-/* Landing para empresas: héroe con foto industrial y panel «¿Qué necesita resolver?» que lleva a seis soluciones
-   en filas alternas con foto, ficha técnica y botón de cotización. Página independiente del sitio principal. */
+/* Landing para empresas: héroe con retícula de plano y panel «¿Qué necesita resolver?» que lleva a seis soluciones
+   en filas alternas con ilustración, ficha técnica y botón de cotización. Página independiente del sitio principal. */
 :root {
   --ink: #0C2135;
   --navy: #132D46;
@@ -48,7 +48,7 @@ h1, h2, h3 { font-family: var(--display); font-weight: 600; line-height: 1.1; le
 p { margin: 0; }
 ul, ol { margin: 0; padding: 0; }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-.dark :focus-visible, .top :focus-visible, .wa-float:focus-visible { outline-color: var(--teal); }
+.dark :focus-visible, .top :focus-visible, .mbar :focus-visible { outline-color: var(--teal); }
 .wrap { width: 100%; max-width: var(--max); margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 @media (min-width: 760px) { .wrap { padding-left: max(36px, env(safe-area-inset-left, 0px)); padding-right: max(36px, env(safe-area-inset-right, 0px)); } }
 .skip { position: absolute; left: -999px; top: 8px; z-index: 50; padding: 10px 14px; background: var(--teal); color: #0A1520; font-weight: 600; border-radius: 6px; }
@@ -163,7 +163,7 @@ picture > source { display: none; }
 .tiers { width: 100%; border-collapse: collapse; font-size: 0.9375rem; min-width: 32rem; }
 .tiers th, .tiers td { padding: 11px 10px; border-bottom: 1px solid var(--rule); text-align: center; }
 .tiers th:first-child, .tiers td:first-child { text-align: left; padding-left: 0; }
-.tiers tbody tr:last-child td { border-bottom: 0; }
+.tiers tbody tr:last-child > * { border-bottom: 0; }
 .tiers thead th { font-family: var(--display); font-size: 1.1875rem; font-weight: 600; border-bottom: 2px solid var(--fg); padding-top: 14px; }
 .tiers thead th small { display: block; font-family: var(--body); font-size: 0.8125rem; font-weight: 400; color: var(--muted); }
 .tiers td.no { color: var(--muted); }
@@ -177,7 +177,7 @@ picture > source { display: none; }
 /* Proyectos */
 .cards { list-style: none; display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
 .card { display: flex; flex-direction: column; height: 100%; background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; }
-.card .ph { aspect-ratio: 16 / 10; background: #FFFFFF; }
+.card .ph { aspect-ratio: 16 / 10; overflow: hidden; background: #FFFFFF; }
 .card .bd { padding: 16px 20px 20px; display: grid; gap: 6px; }
 .card h3 { font-size: 1.25rem; }
 .card p { color: var(--muted); font-size: 0.9375rem; line-height: 1.5; }
@@ -241,15 +241,6 @@ picture > source { display: none; }
 .foot a { color: var(--band-fg); display: inline-flex; align-items: center; min-height: 32px; }
 .foot p { display: flex; flex-wrap: wrap; gap: 6px 20px; }
 
-/* WhatsApp flotante (celular) */
-.wa-float, .foot .wa-float { display: none; }
-@media (max-width: 720px) {
-  .foot .wa-float { position: fixed; z-index: 25; right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-    display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 10px 16px; border-radius: 999px;
-    background: var(--teal); color: #0A1520; font-weight: 700; text-decoration: none; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); }
-  .wa-float svg { width: 22px; height: 22px; }
-  .foot .wrap { padding-bottom: 96px; }
-}
 .hero .wrap > *, .smart > *, .sol > *, .exp > *, .close .wrap > *, .box { min-width: 0; }
 .sol .ph > picture, .card .ph > picture, .exp .ph > picture, .hero > picture, .close > picture { height: 100%; }
 
@@ -274,7 +265,105 @@ picture > source { display: none; }
 @media (min-width: 621px) { .see-all { display: none; } }
 @media (max-width: 620px) { .check.short li:nth-child(n+4) { display: none; } }
 
-/* Tabla de niveles: primera columna fija y pista en celular */
-.tiers th:first-child, .tiers td:first-child { position: sticky; left: 0; z-index: 1; background: var(--surface); }
-.swipe { display: none; font-size: 0.875rem; color: var(--muted); margin-bottom: 8px; }
-@media (max-width: 700px) { .swipe { display: block; } }
+/* Tabla de niveles */
+.tiers tbody th { font-weight: 400; text-align: left; }
+
+/* Barra de contacto (celular) y pista del carrusel de proyectos */
+.mbar, .hint { display: none; }
+
+/* Celular */
+@media (max-width: 720px) {
+  html { scroll-padding-top: 12px; }
+  .top { position: relative; top: 0; }
+  .top .wrap { min-height: 60px; }
+  .top .brand img { height: 32px; }
+  .mbar { position: fixed; z-index: 25; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 10px;
+    padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+    background: var(--ink); border-top: 1px solid var(--band-rule); box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.18);
+    transition: transform 0.22s ease, visibility 0s linear 0s; }
+  .mbar .btn { width: 100%; padding-inline: 12px; }
+  .mbar .btn-line { color: #FFFFFF; }
+  .mbar.off { transform: translateY(110%); visibility: hidden; transition: transform 0.22s ease, visibility 0s linear 0.22s; }
+  .foot .wrap { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (max-width: 720px) and (prefers-reduced-motion: reduce) { .mbar, .mbar.off { transition: none; } }
+
+@media (max-width: 620px) {
+  body { font-size: 1rem; }
+  .actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .actions .btn { width: 100%; }
+  .sec { padding-block: 48px; }
+  .head { margin-bottom: 24px; }
+  .head h2 { font-size: 1.875rem; }
+  .head p { font-size: 1rem; }
+
+  .hero .wrap { gap: 28px; padding-block: 32px 36px; }
+  .hero .for { margin-bottom: 14px; font-size: 0.875rem; }
+  .hero h1 { font-size: 2.375rem; }
+  .hero .lede { margin-top: 14px; font-size: 1.0625rem; }
+  .hero .actions { margin-top: 22px; }
+  .proof { margin-top: 22px; gap: 8px; }
+  .needs { padding: 18px 16px 10px; border-radius: 12px; }
+  .needs h2 { font-size: 1.375rem; }
+  .needs > p { margin-bottom: 4px; }
+  .needs a { min-height: 54px; gap: 12px; padding: 6px 2px; }
+  .needs a .ico { width: 36px; height: 36px; }
+  .needs a .ico svg { width: 20px; height: 20px; }
+  .needs a span span { display: none; }
+
+  .sectors .wrap { display: block; padding-block: 18px 20px; }
+  .sectors h2 { margin-bottom: 10px; }
+  .sectors ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 12px; }
+  .sectors li { align-items: flex-start; font-size: 0.9063rem; line-height: 1.3; }
+  .sectors li svg { flex: none; width: 18px; height: 18px; }
+
+  .sols { gap: 20px; }
+  .sol { border-radius: 14px; scroll-margin-top: 12px; }
+  .sol .ph.ill { aspect-ratio: 16 / 10; padding: 6px; }
+  .sol .ph.ill svg { width: 100%; height: 100%; max-height: none; }
+  .sol .bd { padding: 20px 18px 22px; gap: 12px; }
+  .sol .t { gap: 12px; }
+  .sol .t .ico { width: 40px; height: 40px; }
+  .sol h3 { font-size: 1.4375rem; }
+  .sol .more { display: none; }
+  .spec { padding-top: 0; }
+
+  .smart { gap: 28px; }
+  .smart .actions { margin-top: 18px; }
+  .box { padding: 2px 14px 6px; }
+  .table-scroll { overflow: visible; }
+  .tiers, .tiers thead, .tiers tbody { display: block; min-width: 0; }
+  .tiers tr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 6px; padding-block: 11px; border-bottom: 1px solid var(--rule); }
+  .tiers tbody tr:last-child { border-bottom: 0; }
+  .tiers thead tr { padding-block: 12px 10px; border-bottom: 2px solid var(--fg); }
+  .tiers th, .tiers td { padding: 0; border: 0; text-align: center; }
+  .tiers thead th:first-child { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .tiers thead th { font-size: 1.0625rem; line-height: 1.15; border-bottom: 0; padding-top: 0; }
+  .tiers thead th small { font-size: 0.75rem; line-height: 1.25; margin-top: 2px; }
+  .tiers tbody th { grid-column: 1 / -1; padding: 0 0 6px; font-weight: 600; line-height: 1.35; }
+  .tiers td { font-weight: 600; color: var(--teal-ink); }
+  .tiers td.no { font-weight: 400; color: var(--muted); }
+  .weeks { grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: 10px; }
+  .weeks li { padding: 12px; }
+
+  .hint { display: block; margin: -12px 0 12px; font-size: 0.875rem; color: var(--muted); }
+  .cards { display: flex; gap: 12px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory;
+    margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding: 2px max(16px, env(safe-area-inset-left, 0px)) 12px;
+    scroll-padding-inline: max(16px, env(safe-area-inset-left, 0px)); scrollbar-width: none; }
+  .cards::-webkit-scrollbar { display: none; }
+  .cards > li { flex: 0 0 84%; scroll-snap-align: start; }
+  .card h3 { font-size: 1.1875rem; }
+
+  .flow { gap: 20px; }
+  .flow li { padding-left: 56px; }
+  .flow li::before { width: 40px; height: 40px; font-size: 1.125rem; }
+  .exp { gap: 24px; }
+  .exp .ph { aspect-ratio: 16 / 10; }
+  .exp .check { margin-top: 16px; }
+  .faq summary { padding: 12px 14px; }
+  .faq details > p { padding: 0 14px 14px; }
+  .close .wrap { gap: 28px; padding-block: 48px; }
+  .close .actions { margin-top: 22px; }
+  .contacts li { padding: 14px 16px; }
+  .contacts a { font-size: 1.0625rem; }
+}

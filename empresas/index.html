@@ -168,7 +168,7 @@
       <div>
         <div class="head" style="margin-bottom:0"><h2 id="int-t">Climatización inteligente</h2>
           <p>Monitoreo y optimización continua de los equipos de aire acondicionado, con sensores, plataforma web y soporte técnico. Pensada para bodegas farmacéuticas, hospitales, centros de datos, laboratorios y edificios comerciales.</p></div>
-        <ul class="check" style="margin-top:22px">
+        <ul class="check" id="int-inc" style="margin-top:22px">
           <li>Monitoreo 24/7 de temperatura, humedad y consumo por circuito</li>
           <li>Ajuste de setpoints por horario y control de la demanda pico</li>
           <li>Mantenimiento predictivo con alertas tempranas</li>
@@ -176,6 +176,7 @@
           <li>Integración con generación solar fotovoltaica</li>
           <li>Redundancia N+1 en zonas críticas</li>
         </ul>
+        <button class="see-all" type="button" aria-expanded="false" aria-controls="int-inc" hidden>Ver todo lo que incluye</button>
         <p class="note">El ahorro estimado llega hasta el 35 %, según el diagnóstico de cada instalación.</p>
         <div class="actions">
           <a class="btn btn-main" href="https://wa.me/573017972967?text=Hola%2C%20vengo%20de%20la%20p%C3%A1gina%20para%20empresas%20de%20NMH%20Engineering%20y%20quiero%20cotizar%3A%20diagn%C3%B3stico%20de%20climatizaci%C3%B3n%20inteligente." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Solicitar un diagnóstico</a>
@@ -183,20 +184,19 @@
         </div>
       </div>
       <div>
-        <p class="swipe">Deslice la tabla para ver los tres niveles.</p>
         <div class="box">
           <div class="table-scroll" role="region" tabindex="0" aria-label="Niveles del servicio de climatización inteligente">
-            <table class="tiers">
+            <table class="tiers" role="table">
               <caption class="vh">Niveles del servicio de climatización inteligente</caption>
-              <thead><tr><th scope="col">Incluye</th><th scope="col">Essentials<small>Digitalización inicial</small></th><th scope="col">Professional<small>Operación activa</small></th><th scope="col">Enterprise<small>Varias sedes</small></th></tr></thead>
-              <tbody>
-                <tr><td>Monitoreo de temperatura y humedad en tiempo real</td><td>Sí</td><td>Sí</td><td>Sí</td></tr>
-                <tr><td>Alarmas configurables</td><td>Sí</td><td>Sí</td><td>Sí</td></tr>
-                <tr><td>Tablero web y aplicación móvil</td><td class="no">No</td><td>Sí</td><td>Sí</td></tr>
-                <tr><td>Sensores redundantes y estado de equipos</td><td class="no">No</td><td>Sí</td><td>Sí</td></tr>
-                <tr><td>Energía e integración solar</td><td class="no">No</td><td>Sí</td><td>Sí</td></tr>
-                <tr><td>Gestión de mantenimiento e integración con ERP</td><td class="no">No</td><td class="no">No</td><td>Sí</td></tr>
-                <tr><td>Historial de datos</td><td>90 días</td><td>1 año</td><td>Ilimitado</td></tr>
+              <thead role="rowgroup"><tr role="row"><th scope="col" role="columnheader">Incluye</th><th scope="col" role="columnheader">Essentials<small>Digitalización inicial</small></th><th scope="col" role="columnheader">Professional<small>Operación activa</small></th><th scope="col" role="columnheader">Enterprise<small>Varias sedes</small></th></tr></thead>
+              <tbody role="rowgroup">
+                <tr role="row"><th scope="row" role="rowheader">Monitoreo de temperatura y humedad en tiempo real</th><td role="cell">Sí</td><td role="cell">Sí</td><td role="cell">Sí</td></tr>
+                <tr role="row"><th scope="row" role="rowheader">Alarmas configurables</th><td role="cell">Sí</td><td role="cell">Sí</td><td role="cell">Sí</td></tr>
+                <tr role="row"><th scope="row" role="rowheader">Tablero web y aplicación móvil</th><td role="cell" class="no">No</td><td role="cell">Sí</td><td role="cell">Sí</td></tr>
+                <tr role="row"><th scope="row" role="rowheader">Sensores redundantes y estado de equipos</th><td role="cell" class="no">No</td><td role="cell">Sí</td><td role="cell">Sí</td></tr>
+                <tr role="row"><th scope="row" role="rowheader">Energía e integración solar</th><td role="cell" class="no">No</td><td role="cell">Sí</td><td role="cell">Sí</td></tr>
+                <tr role="row"><th scope="row" role="rowheader">Gestión de mantenimiento e integración con ERP</th><td role="cell" class="no">No</td><td role="cell" class="no">No</td><td role="cell">Sí</td></tr>
+                <tr role="row"><th scope="row" role="rowheader">Historial de datos</th><td role="cell">90 días</td><td role="cell">1 año</td><td role="cell">Ilimitado</td></tr>
               </tbody>
             </table>
           </div>
@@ -216,7 +216,8 @@
   <section class="sec" id="proyectos" aria-labelledby="proy-t">
     <div class="wrap">
       <div class="head"><h2 id="proy-t">Proyectos para la industria</h2><p>Una muestra del portafolio de NMH en combustibles, bombeo, procesos, energía y climatización.</p></div>
-      <ul class="cards"><li><article class="card"><div class="ph"><picture><source type="image/webp" srcset="../assets/img/combustibles-terminal-640.webp 640w, ../assets/img/combustibles-terminal.webp 1031w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw"><img class="pic" src="../assets/img/combustibles-terminal-640.jpg" srcset="../assets/img/combustibles-terminal-640.jpg 640w, ../assets/img/combustibles-terminal.jpg 1031w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw" alt="Terminal de almacenamiento de combustibles" width="640" height="328" loading="lazy" decoding="async"></picture></div><div class="bd"><h3>Terminal de almacenamiento de combustibles</h3><p>Ingeniería de tanques, tuberías, bombeo y sistemas contra incendio.</p><span class="tag">Combustibles</span></div></article></li><li><article class="card"><div class="ph"><picture><source type="image/webp" srcset="../assets/img/bombeo-modelo-640.webp 640w, ../assets/img/bombeo-modelo.webp 977w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw"><img class="pic" src="../assets/img/bombeo-modelo-640.jpg" srcset="../assets/img/bombeo-modelo-640.jpg 640w, ../assets/img/bombeo-modelo.jpg 977w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw" alt="Sistema de bombeo para tanques de una planta industrial" width="640" height="291" loading="lazy" decoding="async"></picture></div><div class="bd"><h3>Sistema de bombeo para tanques de una planta industrial</h3><p>Cálculo del sistema existente, rediseño de tuberías y modelado 3D.</p><span class="tag">Bombeo</span></div></article></li><li><article class="card"><div class="ph"><picture><source type="image/webp" srcset="../assets/img/procesos-diagrama-640.webp 640w, ../assets/img/procesos-diagrama.webp 1400w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw"><img class="pic" src="../assets/img/procesos-diagrama-640.jpg" srcset="../assets/img/procesos-diagrama-640.jpg 640w, ../assets/img/procesos-diagrama.jpg 1400w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw" alt="Ingeniería de proceso con aprovechamiento de residuos" width="640" height="455" loading="lazy" decoding="async"></picture></div><div class="bd"><h3>Ingeniería de proceso con aprovechamiento de residuos</h3><p>Diagrama de flujo, balances y selección de equipos para una planta.</p><span class="tag">Procesos</span></div></article></li><li><article class="card"><div class="ph"><picture><source type="image/webp" srcset="../assets/img/sipra-planos-640.webp 640w, ../assets/img/sipra-planos.webp 1136w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw"><img class="pic" src="../assets/img/sipra-planos-640.jpg" srcset="../assets/img/sipra-planos-640.jpg 640w, ../assets/img/sipra-planos.jpg 1136w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw" alt="Protección atmosférica de edificación" width="640" height="560" loading="lazy" decoding="async"></picture></div><div class="bd"><h3>Protección atmosférica de edificación</h3><p>Diseño de puntas de captación, bajantes y puesta a tierra.</p><span class="tag">Energía</span></div></article></li><li><article class="card"><div class="ph"><picture><source type="image/webp" srcset="../assets/img/climatizacion-tablero-640.webp 640w, ../assets/img/climatizacion-tablero.webp 1004w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw"><img class="pic" src="../assets/img/climatizacion-tablero-640.jpg" srcset="../assets/img/climatizacion-tablero-640.jpg 640w, ../assets/img/climatizacion-tablero.jpg 1004w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw" alt="Plataforma de climatización inteligente" width="640" height="597" loading="lazy" decoding="async"></picture></div><div class="bd"><h3>Plataforma de climatización inteligente</h3><p>Tablero de temperatura y humedad en tiempo real con alarmas.</p><span class="tag">Climatización</span></div></article></li><li><article class="card"><div class="ph"><picture><source type="image/webp" srcset="../assets/img/combustibles-equipo-640.webp 640w, ../assets/img/combustibles-equipo.webp 1400w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw"><img class="pic" src="../assets/img/combustibles-equipo-640.jpg" srcset="../assets/img/combustibles-equipo-640.jpg 640w, ../assets/img/combustibles-equipo.jpg 1400w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw" alt="Sistema de trasiego para estación de servicio" width="640" height="424" loading="lazy" decoding="async"></picture></div><div class="bd"><h3>Sistema de trasiego para estación de servicio</h3><p>Diseño y montaje de equipos de acopio y distribución de combustibles.</p><span class="tag">Combustibles</span></div></article></li></ul>
+      <p class="hint" aria-hidden="true">Deslice para ver los seis proyectos.</p>
+      <ul class="cards" tabindex="0" aria-label="Proyectos para la industria"><li><article class="card"><div class="ph"><picture><source type="image/webp" srcset="../assets/img/combustibles-terminal-640.webp 640w, ../assets/img/combustibles-terminal.webp 1031w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw"><img class="pic" src="../assets/img/combustibles-terminal-640.jpg" srcset="../assets/img/combustibles-terminal-640.jpg 640w, ../assets/img/combustibles-terminal.jpg 1031w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw" alt="Terminal de almacenamiento de combustibles" width="640" height="328" loading="lazy" decoding="async"></picture></div><div class="bd"><h3>Terminal de almacenamiento de combustibles</h3><p>Ingeniería de tanques, tuberías, bombeo y sistemas contra incendio.</p><span class="tag">Combustibles</span></div></article></li><li><article class="card"><div class="ph"><picture><source type="image/webp" srcset="../assets/img/bombeo-modelo-640.webp 640w, ../assets/img/bombeo-modelo.webp 977w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw"><img class="pic" src="../assets/img/bombeo-modelo-640.jpg" srcset="../assets/img/bombeo-modelo-640.jpg 640w, ../assets/img/bombeo-modelo.jpg 977w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw" alt="Sistema de bombeo para tanques de una planta industrial" width="640" height="291" loading="lazy" decoding="async"></picture></div><div class="bd"><h3>Sistema de bombeo para tanques de una planta industrial</h3><p>Cálculo del sistema existente, rediseño de tuberías y modelado 3D.</p><span class="tag">Bombeo</span></div></article></li><li><article class="card"><div class="ph"><picture><source type="image/webp" srcset="../assets/img/procesos-diagrama-640.webp 640w, ../assets/img/procesos-diagrama.webp 1400w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw"><img class="pic" src="../assets/img/procesos-diagrama-640.jpg" srcset="../assets/img/procesos-diagrama-640.jpg 640w, ../assets/img/procesos-diagrama.jpg 1400w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw" alt="Ingeniería de proceso con aprovechamiento de residuos" width="640" height="455" loading="lazy" decoding="async"></picture></div><div class="bd"><h3>Ingeniería de proceso con aprovechamiento de residuos</h3><p>Diagrama de flujo, balances y selección de equipos para una planta.</p><span class="tag">Procesos</span></div></article></li><li><article class="card"><div class="ph"><picture><source type="image/webp" srcset="../assets/img/sipra-planos-640.webp 640w, ../assets/img/sipra-planos.webp 1136w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw"><img class="pic" src="../assets/img/sipra-planos-640.jpg" srcset="../assets/img/sipra-planos-640.jpg 640w, ../assets/img/sipra-planos.jpg 1136w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw" alt="Protección atmosférica de edificación" width="640" height="560" loading="lazy" decoding="async"></picture></div><div class="bd"><h3>Protección atmosférica de edificación</h3><p>Diseño de puntas de captación, bajantes y puesta a tierra.</p><span class="tag">Energía</span></div></article></li><li><article class="card"><div class="ph"><picture><source type="image/webp" srcset="../assets/img/climatizacion-tablero-640.webp 640w, ../assets/img/climatizacion-tablero.webp 1004w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw"><img class="pic" src="../assets/img/climatizacion-tablero-640.jpg" srcset="../assets/img/climatizacion-tablero-640.jpg 640w, ../assets/img/climatizacion-tablero.jpg 1004w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw" alt="Plataforma de climatización inteligente" width="640" height="597" loading="lazy" decoding="async"></picture></div><div class="bd"><h3>Plataforma de climatización inteligente</h3><p>Tablero de temperatura y humedad en tiempo real con alarmas.</p><span class="tag">Climatización</span></div></article></li><li><article class="card"><div class="ph"><picture><source type="image/webp" srcset="../assets/img/combustibles-equipo-640.webp 640w, ../assets/img/combustibles-equipo.webp 1400w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw"><img class="pic" src="../assets/img/combustibles-equipo-640.jpg" srcset="../assets/img/combustibles-equipo-640.jpg 640w, ../assets/img/combustibles-equipo.jpg 1400w" sizes="(min-width: 980px) 30vw, (min-width: 640px) 45vw, 100vw" alt="Sistema de trasiego para estación de servicio" width="640" height="424" loading="lazy" decoding="async"></picture></div><div class="bd"><h3>Sistema de trasiego para estación de servicio</h3><p>Diseño y montaje de equipos de acopio y distribución de combustibles.</p><span class="tag">Combustibles</span></div></article></li></ul>
       <p style="margin-top:24px"><a class="more" href="../proyectos.html">Ver el portafolio completo en el sitio principal</a></p>
     </div>
   </section>
@@ -239,7 +240,7 @@
       <div>
         <div class="head" style="margin-bottom:16px"><h2 id="exp-t">Un equipo para la obra civil, mecánica y eléctrica</h2></div>
         <p>NMH Engineering S.A.S. es una firma de ingeniería de Barranquilla. Reunimos profesionales en ingeniería civil, estructural, geotécnica, hidráulica, mecánica, eléctrica y de procesos, para resolver la estructura, las redes, los equipos y la energía de un proyecto sin interferencias entre especialidades.</p>
-        <ul class="check">
+        <ul class="check" id="exp-inc">
           <li>Diseño estructural de edificaciones en altura, hoteles y estaciones de servicio</li>
           <li>Infraestructura educativa, portuaria y de contención</li>
           <li>Acueductos, alcantarillados, bombeo y tratamiento de aguas residuales</li>
@@ -247,6 +248,7 @@
           <li>Tableros eléctricos, automatización y plantas industriales</li>
           <li>Planificación CAD y modelado 3D</li>
         </ul>
+        <button class="see-all" type="button" aria-expanded="false" aria-controls="exp-inc" hidden>Ver toda la experiencia</button>
       </div>
     </div>
   </section>
@@ -288,12 +290,15 @@
     <p><span>NMH ENGINEERING S.A.S.</span><span>NIT 901.892.933-1</span><span>Barranquilla, Atlántico</span></p>
     <p><a href="../">Sitio principal</a><a href="../servicios.html">Todos los servicios</a></p>
   </div>
-  <a class="wa-float" href="https://wa.me/573017972967?text=Hola%2C%20vengo%20de%20la%20p%C3%A1gina%20para%20empresas%20de%20NMH%20Engineering%20y%20quiero%20cotizar%3A%20un%20proyecto%20para%20mi%20empresa." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><span>WhatsApp</span></a>
 </footer>
+<aside class="mbar" aria-label="Contacto rápido">
+  <a class="btn btn-main" href="https://wa.me/573017972967?text=Hola%2C%20vengo%20de%20la%20p%C3%A1gina%20para%20empresas%20de%20NMH%20Engineering%20y%20quiero%20cotizar%3A%20un%20proyecto%20para%20mi%20empresa." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>WhatsApp</a>
+  <a class="btn btn-line" href="mailto:michael.miranda@nmh.com.co?subject=Cotizaci%C3%B3n%20de%20ingenier%C3%ADa%20para%20empresa"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></svg>Correo</a>
+</aside>
 <script>
 (function () {
   document.querySelectorAll(".see-all").forEach(function (btn) {
-    var list = document.getElementById(btn.getAttribute("aria-controls"));
+    var list = document.getElementById(btn.getAttribute("aria-controls")), label = btn.textContent;
     if (!list) return;
     btn.hidden = false;
     list.classList.add("short");
@@ -301,9 +306,19 @@
       var open = btn.getAttribute("aria-expanded") === "true";
       btn.setAttribute("aria-expanded", String(!open));
       list.classList.toggle("short", open);
-      btn.textContent = open ? "Ver todo lo que incluye" : "Ver menos";
+      btn.textContent = open ? label : "Ver menos";
     });
   });
+  var bar = document.querySelector(".mbar"), heroA = document.querySelector(".hero .actions"), close = document.getElementById("contacto");
+  if (bar && heroA && close && "IntersectionObserver" in window) {
+    var seen = { hero: true, close: false };
+    bar.classList.add("off");
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { seen[en.target === heroA ? "hero" : "close"] = en.isIntersecting; });
+      bar.classList.toggle("off", seen.hero || seen.close);
+    });
+    io.observe(heroA); io.observe(close);
+  }
 })();
 </script>
 </body>
