@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Estructura Ágil · Portal del suscriptor | NMH Engineering</title>
+<meta name="description" content="Portal de suscriptores de NMH Estructura Ágil: cotización rápida de diseño estructural y estimado de acero por m² según amenaza sísmica y eólica.">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="theme-color" content="#132D46">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="../assets/img/favicon.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+<!-- ===================== ACCESO ===================== -->
+<section id="vista-acceso" class="acceso" aria-labelledby="t-acceso">
+  <div class="acceso-banda">
+    <div class="acceso-banda-in">
+      <img src="../assets/img/logo-nmh-claro.png" alt="NMH Engineering" width="118" height="48">
+      <p class="eyebrow">Ingeniería estructural por suscripción</p>
+      <h1 id="t-acceso">Estructura Ágil</h1>
+      <p class="lede">Predimensionamientos en 48 horas, diseño estructural a tarifa preferencial y el peso de acero estimado antes de cotizar.</p>
+      <ul class="hechos">
+        <li><strong>300 m²</strong><span>de diseño incluidos al mes</span></li>
+        <li><strong>8</strong><span>predimensionamientos al mes</span></li>
+        <li><strong>NSR-10</strong><span>amenaza sísmica y eólica por municipio</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="acceso-form">
+    <form id="form-acceso" class="tarjeta login" novalidate>
+      <h2>Ingreso de suscriptores</h2>
+      <p class="muted">Use las credenciales que NMH le asignó.</p>
+      <label for="usuario">Usuario</label>
+      <input id="usuario" name="usuario" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+      <label for="clave">Clave</label>
+      <input id="clave" name="clave" type="password" autocomplete="current-password" required>
+      <p id="error-acceso" class="error" role="alert" hidden>Usuario o clave incorrectos.</p>
+      <button type="submit" class="btn btn-main btn-full">Ingresar</button>
+      <p class="demo">Versión de demostración · usuario <code>herrajesandina</code> · clave <code>nmh2026</code></p>
+    </form>
+  </div>
+</section>
+
+<!-- ===================== APP ===================== -->
+<div id="vista-app" hidden>
+  <header class="top">
+    <div class="wrap top-in">
+      <a class="marca" href="../" aria-label="NMH Engineering, sitio principal"><img src="../assets/img/logo-nmh-claro.png" alt="NMH Engineering" width="98" height="40"></a>
+      <div class="producto">
+        <span class="producto-nombre">Estructura Ágil</span>
+        <span class="producto-sub" id="txt-suscriptor">Herrajes Andina S.A.S. · Plan Base</span>
+      </div>
+      <button type="button" class="btn btn-ghost" id="btn-salir">Salir</button>
+    </div>
+  </header>
+
+  <section class="cupo" aria-label="Estado de la suscripción">
+    <div class="wrap cupo-in">
+      <div class="cupo-item cupo-m2">
+        <div class="cupo-cab"><span>Cupo de diseño · <span id="txt-mes">mes</span></span><strong id="txt-cupo">— m² eq</strong></div>
+        <div class="barra" role="progressbar" aria-label="Cupo de diseño usado" aria-valuemin="0" aria-valuemax="100" id="barra-cupo"><span id="barra-cupo-fill"></span></div>
+        <small id="txt-cupo-det">—</small>
+      </div>
+      <div class="cupo-item">
+        <div class="cupo-cab"><span>Predimensionamientos</span><strong id="txt-predim">—</strong></div>
+        <div class="barra" role="progressbar" aria-label="Predimensionamientos usados" aria-valuemin="0" aria-valuemax="100" id="barra-predim"><span id="barra-predim-fill"></span></div>
+        <small>Entrega en 2 días hábiles</small>
+      </div>
+      <div class="cupo-item">
+        <div class="cupo-cab"><span>Tarifa preferencial</span><strong id="txt-tarifa">—</strong></div>
+        <small id="txt-tarifa-det">—</small>
+      </div>
+    </div>
+  </section>
+
+  <nav class="pestanas" aria-label="Secciones del portal">
+    <div class="wrap" role="tablist">
+      <button role="tab" aria-selected="true" aria-controls="p-cotizar" id="tab-cotizar" class="pestana">Cotización rápida</button>
+      <button role="tab" aria-selected="false" aria-controls="p-tenores" id="tab-tenores" class="pestana" tabindex="-1">Tabla de tenores</button>
+      <button role="tab" aria-selected="false" aria-controls="p-plan" id="tab-plan" class="pestana" tabindex="-1">Mi suscripción</button>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <!-- ---------- COTIZAR ---------- -->
+    <section id="p-cotizar" role="tabpanel" aria-labelledby="tab-cotizar" class="panel">
+      <div class="grid-cot">
+        <form id="form-cot" class="tarjeta form-cot" novalidate>
+          <h2>Datos del proyecto</h2>
+
+          <label for="f-nombre">Nombre o referencia <span class="opc">(opcional)</span></label>
+          <input id="f-nombre" placeholder="Ej.: Bodega cliente XYZ, Malambo" maxlength="80">
+
+          <label for="f-ciudad">Ciudad o municipio</label>
+          <select id="f-ciudad" required></select>
+
+          <div id="caja-manual" class="fila2" hidden>
+            <div><label for="f-aa">Aa</label><input id="f-aa" type="number" step="0.05" min="0.05" max="0.50" value="0.15" inputmode="decimal"></div>
+            <div><label for="f-av">Av</label><input id="f-av" type="number" step="0.05" min="0.05" max="0.50" value="0.15" inputmode="decimal"></div>
+          </div>
+
+          <div class="amenaza" id="caja-amenaza" aria-live="polite">
+            <div><span class="k">Aa</span><span class="v" id="o-aa">—</span></div>
+            <div><span class="k">Av</span><span class="v" id="o-av">—</span></div>
+            <div><span class="k">Amenaza sísmica</span><span class="v"><span class="chip" id="o-zona">—</span></span></div>
+          </div>
+
+          <label for="f-viento">Velocidad básica de viento</label>
+          <select id="f-viento"></select>
+          <small class="ayuda" id="ayuda-viento">Valor por defecto conservador para el departamento. Confírmelo con la Figura B.6.4-1 de la NSR-10.</small>
+
+          <label for="f-tipo">Tipo de construcción</label>
+          <select id="f-tipo"></select>
+          <small class="ayuda" id="ayuda-tipo"></small>
+
+          <div class="fila2">
+            <div>
+              <label for="f-area">Área por piso (m²)</label>
+              <input id="f-area" type="number" min="10" max="100000" step="1" value="800" inputmode="numeric" required>
+            </div>
+            <div>
+              <label for="f-pisos">Número de pisos</label>
+              <input id="f-pisos" type="number" min="1" max="15" step="1" value="1" inputmode="numeric" required>
+            </div>
+          </div>
+          <small class="ayuda" id="ayuda-pisos"></small>
+
+          <fieldset class="irr">
+            <legend>Irregularidad aparente</legend>
+            <label class="opcion"><input type="radio" name="irr" value="regular" checked><span><strong>Regular</strong><em>Planta rectangular, luces y alturas uniformes.</em></span></label>
+            <label class="opcion"><input type="radio" name="irr" value="leve"><span><strong>Leve</strong><em>Entrantes, un voladizo o un cambio de altura.</em></span></label>
+            <label class="opcion"><input type="radio" name="irr" value="marcada"><span><strong>Marcada</strong><em>Planta en L o T, piso blando, voladizos grandes o luces mixtas.</em></span></label>
+          </fieldset>
+
+          <p id="error-cot" class="error" role="alert" hidden></p>
+          <button type="submit" class="btn btn-main btn-full">Calcular cotización</button>
+        </form>
+
+        <div id="resultado" class="resultado" aria-live="polite">
+          <div class="vacio tarjeta" id="res-vacio">
+            <h2>Resultado</h2>
+            <p class="muted">Complete los datos y pulse <strong>Calcular cotización</strong>. Verá el valor del diseño con su tarifa de suscriptor y el peso de acero estimado por piso.</p>
+          </div>
+
+          <div id="res-lleno" hidden>
+            <article class="tarjeta res-diseno">
+              <p class="eyebrow">Diseño estructural</p>
+              <h2 class="cifra" id="r-total">—</h2>
+              <p class="muted" id="r-total-det">—</p>
+              <dl class="filas" id="r-filas-diseno"></dl>
+              <p class="ahorro" id="r-ahorro"></p>
+            </article>
+
+            <article class="tarjeta res-acero">
+              <p class="eyebrow" id="r-material">Acero estimado</p>
+              <h2 class="cifra" id="r-ton">—</h2>
+              <p class="muted" id="r-ton-det">—</p>
+              <div class="tenor-par">
+                <div><span class="k">Esperado</span><span class="v" id="r-esp">—</span></div>
+                <div class="destacado"><span class="k">Conservador (presupuesto)</span><span class="v" id="r-cons">—</span></div>
+              </div>
+              <div class="tabla-scroll">
+                <table class="tabla" id="r-tabla-pisos">
+                  <caption class="sr">Acero estimado por piso</caption>
+                  <thead><tr><th scope="col">Piso</th><th scope="col" class="n">Área (m²)</th><th scope="col" class="n">kg/m² cons.</th><th scope="col" class="n">Peso cons. (kg)</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+              <details class="factores">
+                <summary>Cómo se calculó</summary>
+                <dl class="filas" id="r-factores"></dl>
+              </details>
+            </article>
+
+            <div class="acciones">
+              <a class="btn btn-main" id="btn-predim" target="_blank" rel="noopener">Solicitar predimensionamiento</a>
+              <button type="button" class="btn btn-sec" id="btn-registrar">Registrar diseño y descontar cupo</button>
+              <button type="button" class="btn btn-sec" id="btn-imprimir">Imprimir o guardar PDF</button>
+            </div>
+            <p class="aviso"><strong>Estimado preliminar.</strong> Orden de magnitud para preparar propuestas (±25 %). No reemplaza el predimensionamiento ni el diseño estructural firmado conforme a la NSR-10. Los valores de Aa, Av y viento deben confirmarse para cada proyecto.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- TENORES ---------- -->
+    <section id="p-tenores" role="tabpanel" aria-labelledby="tab-tenores" class="panel" hidden>
+      <div class="tarjeta">
+        <div class="cab-tenores">
+          <div>
+            <h2>Tenores típicos de acero</h2>
+            <p class="muted">kg/m² por piso para una estructura regular de un piso. Cada celda muestra el valor esperado y, debajo, el conservador para presupuesto.</p>
+          </div>
+          <div class="sel-viento">
+            <label for="t-viento">Viento</label>
+            <select id="t-viento"></select>
+          </div>
+        </div>
+        <div class="tabla-scroll">
+          <table class="tabla tabla-tenores" id="tabla-tenores">
+            <caption class="sr">Tenores de acero por tipo de construcción y amenaza sísmica</caption>
+            <thead>
+              <tr><th scope="col">Tipo de construcción</th><th scope="col">Material</th><th scope="col" class="n">Baja<br><small>A = 0,10</small></th><th scope="col" class="n">Intermedia<br><small>A = 0,20</small></th><th scope="col" class="n">Alta<br><small>A = 0,30</small></th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="aviso">A = máx(Aa, Av). Acero estructural: perfiles, conexiones, correas y arriostramiento; sin lámina de cubierta ni steel deck. Acero de refuerzo: superestructura y cimentación superficial. Valores de práctica para predimensionamiento, calibrados por NMH con proyectos reales; no son valores de diseño.</p>
+      </div>
+    </section>
+
+    <!-- ---------- PLAN ---------- -->
+    <section id="p-plan" role="tabpanel" aria-labelledby="tab-plan" class="panel" hidden>
+      <div class="grid-plan">
+        <div class="tarjeta">
+          <p class="eyebrow">Su plan</p>
+          <h2 id="pl-nombre">Plan Base</h2>
+          <p class="cifra-sm" id="pl-cuota">—</p>
+          <ul class="incluye">
+            <li><strong>Atención a sus clientes en diseño.</strong> El ingeniero asignado acompaña reuniones técnicas y responde consultas de diseño de los proyectos que usted cotiza.</li>
+            <li><strong>Predimensionamientos para propuestas.</strong> Hasta 8 fichas al mes con esquema estructural, perfiles tipo y peso de acero; entrega en 2 días hábiles.</li>
+            <li><strong>Cupo de diseño incluido.</strong> <span id="pl-cupo">300</span> m² equivalentes al mes de diseño estructural con memoria, planos guía y firma.</li>
+            <li><strong>Soporte técnico de los diseños ejecutados</strong> durante fabricación y montaje, con ajustes menores sin costo.</li>
+            <li><strong>Soporte en horario hábil</strong> <span id="pl-horario"></span>, con respuesta en máximo 4 horas hábiles.</li>
+            <li><strong>Tarifa preferencial</strong> para el diseño que exceda el cupo.</li>
+            <li><strong>Equipo consultivo</strong> de estructuras, geotecnia y patología: una mesa técnica al mes y hasta dos consultas puntuales.</li>
+          </ul>
+          <a class="btn btn-main" id="btn-wa-soporte" target="_blank" rel="noopener">Escribir a soporte NMH</a>
+        </div>
+        <div class="tarjeta">
+          <p class="eyebrow">Movimientos del mes</p>
+          <h2>Historial</h2>
+          <ul class="historial" id="historial"></ul>
+          <button type="button" class="btn btn-ghost-osc" id="btn-reiniciar">Reiniciar datos de demostración</button>
+          <p class="aviso">En esta versión de demostración los consumos se guardan solo en este navegador.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <div class="wrap">
+      <p>NMH ENGINEERING S.A.S. · NIT 901.892.933-1 · Barranquilla, Atlántico</p>
+      <p class="muted">Estructura Ágil <span id="txt-version"></span></p>
+    </div>
+  </footer>
+</div>
+
+<!-- Hoja para imprimir -->
+<section id="impresion" class="impresion" aria-hidden="true"></section>
+
+<script src="datos.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
