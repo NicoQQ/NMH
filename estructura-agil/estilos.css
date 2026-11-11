@@ -219,3 +219,8 @@ fieldset.irr legend { font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; p
   .impresion .nota { font-size: 9pt; margin-top: 12px; text-align: justify; }
   .impresion .pie-imp { margin-top: 18px; font-size: 8.5pt; color: #333; border-top: 1px solid #9AA6AE; padding-top: 6px; }
 }
+
+/* v1.1: mástiles, cuarta casilla del cupo */
+@media (min-width: 760px) { .cupo-in { grid-template-columns: 1.3fr 1fr 1fr 1fr; gap: 24px; } }
+.opcion.chk { margin-top: 16px; }
+.tarjeta-sep { margin-top: 20px; }

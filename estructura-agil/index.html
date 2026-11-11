@@ -29,7 +29,7 @@
       <ul class="hechos">
         <li><strong>300 m²</strong><span>de diseño incluidos al mes</span></li>
         <li><strong>8</strong><span>predimensionamientos al mes</span></li>
-        <li><strong>NSR-10</strong><span>amenaza sísmica y eólica por municipio</span></li>
+        <li><strong>2</strong><span>cimentaciones de mástil hasta 20 m al mes</span></li>
       </ul>
     </div>
   </div>
@@ -64,7 +64,7 @@
   <section class="cupo" aria-label="Estado de la suscripción">
     <div class="wrap cupo-in">
       <div class="cupo-item cupo-m2">
-        <div class="cupo-cab"><span>Cupo de diseño · <span id="txt-mes">mes</span></span><strong id="txt-cupo">— m² eq</strong></div>
+        <div class="cupo-cab"><span>Cupo del mes<span id="txt-mes" hidden>mes</span></span><strong id="txt-cupo">— m² eq</strong></div>
         <div class="barra" role="progressbar" aria-label="Cupo de diseño usado" aria-valuemin="0" aria-valuemax="100" id="barra-cupo"><span id="barra-cupo-fill"></span></div>
         <small id="txt-cupo-det">—</small>
       </div>
@@ -72,6 +72,11 @@
         <div class="cupo-cab"><span>Predimensionamientos</span><strong id="txt-predim">—</strong></div>
         <div class="barra" role="progressbar" aria-label="Predimensionamientos usados" aria-valuemin="0" aria-valuemax="100" id="barra-predim"><span id="barra-predim-fill"></span></div>
         <small>Entrega en 2 días hábiles</small>
+      </div>
+      <div class="cupo-item">
+        <div class="cupo-cab"><span>Cimentaciones de mástil</span><strong id="txt-cim">—</strong></div>
+        <div class="barra" role="progressbar" aria-label="Cimentaciones de mástil usadas" aria-valuemin="0" aria-valuemax="100" id="barra-cim"><span id="barra-cim-fill"></span></div>
+        <small>Hasta 20 m de altura</small>
       </div>
       <div class="cupo-item">
         <div class="cupo-cab"><span>Tarifa preferencial</span><strong id="txt-tarifa">—</strong></div>
@@ -120,6 +125,7 @@
           <select id="f-tipo"></select>
           <small class="ayuda" id="ayuda-tipo"></small>
 
+          <div id="bloque-area">
           <div class="fila2">
             <div>
               <label for="f-area">Área por piso (m²)</label>
@@ -138,6 +144,22 @@
             <label class="opcion"><input type="radio" name="irr" value="leve"><span><strong>Leve</strong><em>Entrantes, un voladizo o un cambio de altura.</em></span></label>
             <label class="opcion"><input type="radio" name="irr" value="marcada"><span><strong>Marcada</strong><em>Planta en L o T, piso blando, voladizos grandes o luces mixtas.</em></span></label>
           </fieldset>
+          </div>
+
+          <div id="bloque-mastil" hidden>
+            <div class="fila2">
+              <div>
+                <label for="f-altura">Altura (m)</label>
+                <input id="f-altura" type="number" min="6" max="20" step="0.5" value="18" inputmode="decimal">
+              </div>
+              <div>
+                <label for="f-cant">Unidades a fabricar</label>
+                <input id="f-cant" type="number" min="1" max="1000" step="1" value="1" inputmode="numeric">
+              </div>
+            </div>
+            <small class="ayuda">Referencias de 16 m y 18 m en la pestaña Tabla de tenores. Para alturas mayores de 20 m solicite cotización directa.</small>
+            <label class="opcion chk"><input type="checkbox" id="f-cim" checked><span><strong>Incluir diseño de cimentación</strong><em>Usa una de las cimentaciones incluidas en el mes; si ya se usaron, se liquida a tarifa preferencial.</em></span></label>
+          </div>
 
           <p id="error-cot" class="error" role="alert" hidden></p>
           <button type="submit" class="btn btn-main btn-full">Calcular cotización</button>
@@ -169,7 +191,7 @@
               <div class="tabla-scroll">
                 <table class="tabla" id="r-tabla-pisos">
                   <caption class="sr">Acero estimado por piso</caption>
-                  <thead><tr><th scope="col">Piso</th><th scope="col" class="n">Área (m²)</th><th scope="col" class="n">kg/m² cons.</th><th scope="col" class="n">Peso cons. (kg)</th></tr></thead>
+                  <thead id="r-thead"><tr><th scope="col">Piso</th><th scope="col" class="n">Área (m²)</th><th scope="col" class="n">kg/m² cons.</th><th scope="col" class="n">Peso cons. (kg)</th></tr></thead>
                   <tbody></tbody>
                 </table>
               </div>
@@ -214,6 +236,21 @@
         </div>
         <p class="aviso">A = máx(Aa, Av). Acero estructural: perfiles, conexiones, correas y arriostramiento; sin lámina de cubierta ni steel deck. Acero de refuerzo: superestructura y cimentación superficial. Valores de práctica para predimensionamiento, calibrados por NMH con proyectos reales; no son valores de diseño.</p>
       </div>
+
+      <div class="tarjeta tarjeta-sep">
+        <h2>Mástiles y postes de referencia</h2>
+        <p class="muted">Peso de acero por unidad (esperado y, debajo, conservador) y valor del diseño, antes de IVA.</p>
+        <div class="tabla-scroll">
+          <table class="tabla tabla-tenores" id="tabla-mastiles">
+            <caption class="sr">Referencias de mástiles y postes de 16 y 18 m</caption>
+            <thead>
+              <tr><th scope="col">Referencia</th><th scope="col" class="n">Peso 100 km/h<br><small>kg</small></th><th scope="col" class="n">Peso 130 km/h<br><small>kg</small></th><th scope="col" class="n">Diseño del tipo<br><small>suscriptor / lista</small></th><th scope="col" class="n">Cimentación<br><small>suscriptor / lista</small></th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="aviso">Pesos de fuste, placa base, pernos y accesorios tipo, calculados por NMH a partir de geometrías típicas. Monopolo con carga de antenas usual; cargas especiales se cotizan aparte. El plan incluye 2 diseños de cimentación de mástil hasta 20 m al mes, con parámetros geotécnicos suministrados por el suscriptor.</p>
+      </div>
     </section>
 
     <!-- ---------- PLAN ---------- -->
@@ -226,11 +263,14 @@
           <ul class="incluye">
             <li><strong>Atención a sus clientes en diseño.</strong> El ingeniero asignado acompaña reuniones técnicas y responde consultas de diseño de los proyectos que usted cotiza.</li>
             <li><strong>Predimensionamientos para propuestas.</strong> Hasta 8 fichas al mes con esquema estructural, perfiles tipo y peso de acero; entrega en 2 días hábiles.</li>
-            <li><strong>Cupo de diseño incluido.</strong> <span id="pl-cupo">300</span> m² equivalentes al mes de diseño estructural con memoria, planos guía y firma.</li>
+            <li><strong>Cupo de diseño incluido.</strong> <span id="pl-cupo">300</span> m² equivalentes al mes de diseño estructural con memoria, planos guía y firma. El crédito es mensual: lo que no se usa en el mes se pierde.</li>
             <li><strong>Soporte técnico de los diseños ejecutados</strong> durante fabricación y montaje, con ajustes menores sin costo.</li>
             <li><strong>Soporte en horario hábil</strong> <span id="pl-horario"></span>, con respuesta en máximo 4 horas hábiles.</li>
             <li><strong>Tarifa preferencial</strong> para el diseño que exceda el cupo.</li>
-            <li><strong>Equipo consultivo</strong> de estructuras, geotecnia y patología: una mesa técnica al mes y hasta dos consultas puntuales.</li>
+            <li><strong>Cimentaciones de mástil.</strong> Dos diseños de cimentación al mes para postes o monopolos de hasta 20 m.</li>
+            <li><strong>Equipo consultivo</strong> de estructuras, geotecnia y patología: dos mesas técnicas y tres consultas al mes.</li>
+            <li><strong>Negociación de consultorías de terceros.</strong> NMH define el alcance, solicita y negocia las cotizaciones (geotecnia, topografía, ensayos) y revisa los entregables.</li>
+            <li><strong>Normas:</strong> NSR-10 y, cuando el proyecto lo exige, ASCE, AISC, ACI, ANSI/TIA-222 y Eurocódigos.</li>
           </ul>
           <a class="btn btn-main" id="btn-wa-soporte" target="_blank" rel="noopener">Escribir a soporte NMH</a>
         </div>

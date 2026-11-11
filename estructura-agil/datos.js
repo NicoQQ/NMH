@@ -13,7 +13,7 @@
      con los proyectos reales que diseñe NMH (ver documento del producto).
 */
 window.NMH_DATOS = {
-  version: "1.0 · 10/11/2026",
+  version: "1.1 · 11/11/2026",
 
   /* ---------- Acceso de demostración (solo muestra, no es seguridad real) ---------- */
   acceso: {
@@ -31,16 +31,18 @@ window.NMH_DATOS = {
 
   /* ---------- Plan Base ---------- */
   plan: {
-    cuotaMensual: 4000000,          // COP antes de IVA
+    cuotaMensual: 6000000,          // COP antes de IVA
     iva: 0.19,
-    cupoM2Eq: 300,                  // m² equivalentes de diseño incluidos por mes
+    cupoM2Eq: 300,                  // m² equivalentes de diseño incluidos por mes (crédito mensual: lo no usado se pierde)
     predimensionamientos: 8,        // fichas de predimensionamiento incluidas por mes
+    cimentaciones: 2,               // diseños de cimentación de mástil o poste hasta 20 m incluidos por mes
     tarifaLista: 6000,              // COP/m² eq, antes de IVA
     tarifaSuscriptor: 5000,         // COP/m² eq, antes de IVA
     minimoLista: 1200000,           // valor mínimo por proyecto (no suscriptor)
     minimoSuscriptor: 1000000,      // valor mínimo por proyecto facturado completo (suscriptor)
     demoConsumido: 120,             // m² eq ya usados en la demostración
     demoPredim: 2,                  // fichas ya usadas en la demostración
+    demoCim: 0,                     // cimentaciones ya usadas en la demostración
     demoProyecto: "Cubierta bodega en Malambo (120 m² eq)"
   },
 
@@ -77,6 +79,21 @@ window.NMH_DATOS = {
     edificioMetal: { nombre: "Edificio en estructura metálica", material: "Acero estructural", nota: "Pórticos resistentes a momento o arriostrados con losa sobre steel deck.", base: 48, cons: 1.20, sis: 0.06, vie: 0.08, pis: 0.04, dis: 1.15, maxPisos: 12 },
     casa:       { nombre: "Casa o vivienda en concreto reforzado", material: "Acero de refuerzo", nota: "Pórticos o mampostería confinada de 1 a 3 pisos. Incluye cimentación superficial.", base: 24, cons: 1.20, sis: 0.06, vie: 0.00, pis: 0.06, dis: 1.00, maxPisos: 3 },
     edificioConcreto: { nombre: "Edificio en concreto reforzado (pórticos)", material: "Acero de refuerzo", nota: "Pórticos o sistema combinado. Incluye cimentación superficial; pilotes aparte.", base: 34, cons: 1.20, sis: 0.07, vie: 0.03, pis: 0.025, dis: 1.10, maxPisos: 15 }
+  },
+
+  /* ---------- Mástiles y postes (hasta 20 m) ----------
+     Peso por unidad (t) con viento de 100 km/h: ref18 × (H/18)^k. Referencias: 16 m y 18 m.
+     Geometrías típicas: poste de alumbrado o cámaras (fuste cónico de 4 a 5 mm, placa base);
+     monopolo de telecomunicaciones (fuste poligonal de 5 a 6 mm, placa base, escalera y soportes).
+     Precios por tipo de mástil diseñado; la cimentación se cotiza por sitio o tipo de suelo.   */
+  mastiles: {
+    poste:    { nombre: "Poste de alumbrado o cámaras", ref18: 0.49, k: 1.72, vie: 0.35, sis: 0.01, cons: 1.20,
+                disenoLista: 2500000, disenoSus: 2000000, cimLista: 1500000, cimSus: 1200000,
+                nota: "Fuste tubular cónico galvanizado con placa base y pernos. Incluye diseño de placa y pernos de anclaje." },
+    monopolo: { nombre: "Monopolo tubular de telecomunicaciones", ref18: 1.42, k: 1.43, vie: 0.35, sis: 0.01, cons: 1.20,
+                disenoLista: 5000000, disenoSus: 4000000, cimLista: 2000000, cimSus: 1600000,
+                nota: "Fuste poligonal galvanizado para antenas (ANSI/TIA-222 y NSR-10). Incluye placa base, pernos, escalera y soportes tipo." },
+    alturaMin: 6, alturaMax: 20, referencias: [16, 18]
   },
 
   irregularidadAcero: { regular: 1.00, leve: 1.08, marcada: 1.18 },

@@ -25,6 +25,7 @@
       mes: mesActual(),
       consumido: D.plan.demoConsumido,
       predim: D.plan.demoPredim,
+      cim: D.plan.demoCim,
       historial: [{ fecha: hoyTxt(), desc: "Diseño registrado · " + D.plan.demoProyecto, m2: D.plan.demoConsumido, valor: 0 },
                   { fecha: hoyTxt(), desc: "Predimensionamientos solicitados (2)", m2: 0, valor: 0, predim: true }]
     };
@@ -33,7 +34,9 @@
     var s = null;
     try { s = JSON.parse(leer("localStorage", CLAVE_ESTADO)); } catch (e) { s = null; }
     if (!s || typeof s.consumido !== "number") s = estadoInicial();
-    if (s.mes !== mesActual()) { s = { mes: mesActual(), consumido: 0, predim: 0, historial: [] }; }
+    if (typeof s.cim !== "number") s.cim = 0;
+    // Crédito mensual: al cambiar de mes, lo no usado se pierde.
+    if (s.mes !== mesActual()) { s = { mes: mesActual(), consumido: 0, predim: 0, cim: 0, historial: [] }; }
     return s;
   }
   function guardarEstado() { escribir("localStorage", CLAVE_ESTADO, JSON.stringify(estado)); }
@@ -118,11 +121,18 @@
   }
   function poblarTipos() {
     var sel = $("f-tipo");
+    var g1 = document.createElement("optgroup"); g1.label = "Edificaciones y cubiertas";
     Object.keys(D.tipos).forEach(function (k) {
-      var o = document.createElement("option"); o.value = k; o.textContent = D.tipos[k].nombre; sel.appendChild(o);
+      var o = document.createElement("option"); o.value = k; o.textContent = D.tipos[k].nombre; g1.appendChild(o);
     });
+    var g2 = document.createElement("optgroup"); g2.label = "Mástiles y postes (hasta " + D.mastiles.alturaMax + " m)";
+    ["poste", "monopolo"].forEach(function (k) {
+      var o = document.createElement("option"); o.value = "m:" + k; o.textContent = D.mastiles[k].nombre; g2.appendChild(o);
+    });
+    sel.appendChild(g1); sel.appendChild(g2);
     sel.value = "bodega";
   }
+  function esMastil() { return $("f-tipo").value.indexOf("m:") === 0; }
   function ciudadSel() {
     var v = $("f-ciudad").value;
     if (v === "manual") {
@@ -150,6 +160,13 @@
     var chip = $("o-zona"); chip.textContent = z; chip.className = "chip " + z;
   }
   function alCambiarTipo() {
+    var mas = esMastil();
+    $("bloque-mastil").hidden = !mas; $("bloque-area").hidden = mas;
+    if (mas) {
+      var m = D.mastiles[$("f-tipo").value.slice(2)];
+      $("ayuda-tipo").textContent = "Acero estructural. " + m.nota;
+      return;
+    }
     var t = D.tipos[$("f-tipo").value];
     $("ayuda-tipo").textContent = t.material + ". " + t.nota;
     var p = $("f-pisos");
@@ -161,8 +178,41 @@
   }
 
   /* ---------- cálculo ---------- */
+  function calcularMastil(c) {
+    var key = $("f-tipo").value.slice(2), m = D.mastiles[key];
+    var H = parseFloat($("f-altura").value), N = parseInt($("f-cant").value, 10);
+    var V = parseFloat($("f-viento").value), inclCim = $("f-cim").checked;
+    var err = "";
+    if (!isFinite(H) || H < D.mastiles.alturaMin) err = "Ingrese una altura de al menos " + D.mastiles.alturaMin + " m.";
+    else if (H > D.mastiles.alturaMax) err = "Para alturas mayores de " + D.mastiles.alturaMax + " m solicite una cotización directa.";
+    else if (!isFinite(N) || N < 1) err = "Ingrese el número de unidades.";
+    else if (c.manual && (!(c.aa >= 0.05 && c.aa <= 0.5) || !(c.av >= 0.05 && c.av <= 0.5))) err = "Aa y Av deben estar entre 0,05 y 0,50.";
+    $("error-cot").hidden = !err; $("error-cot").textContent = err;
+    if (err) return null;
+    var A = Math.max(c.aa, c.av), zona = zonaDe(c.aa, c.av);
+    var pasos = Math.max(0, Math.round((A - 0.10) / 0.05 * 100) / 100);
+    var fS = 1 + m.sis * pasos;
+    var fW = Math.pow(Math.max(V, 100) / 100, 2 * m.vie);
+    var fH = Math.pow(H / 18, m.k);
+    var esp = m.ref18 * fH * fS * fW * 1000, cons = esp * m.cons;
+    var cimRest = Math.max(0, D.plan.cimentaciones - estado.cim);
+    var cimIncl = inclCim && cimRest > 0;
+    var valorCim = inclCim ? (cimIncl ? 0 : m.cimSus) : 0;
+    var valor = m.disenoSus + valorCim;
+    var lista = m.disenoLista + (inclCim ? m.cimLista : 0);
+    return {
+      mastil: true, key: key, m: m, ciudad: c, tipo: { nombre: m.nombre, material: "Acero estructural" },
+      H: H, N: N, V: V, A: A, zona: zona, fS: fS, fW: fW, fH: fH, esp: esp, cons: cons,
+      kgEsp: esp * N, kgCons: cons * N, inclCim: inclCim, cimIncl: cimIncl, cimRest: cimRest,
+      valorDis: m.disenoSus, valorCim: valorCim, valor: valor, iva: valor * D.plan.iva, total: valor * (1 + D.plan.iva),
+      lista: lista, listaTotal: lista * (1 + D.plan.iva), consumo: 0, m2eq: 0,
+      nombre: $("f-nombre").value.trim(), fecha: new Date()
+    };
+  }
+
   function calcular() {
     var c = ciudadSel();
+    if (esMastil()) return calcularMastil(c);
     var tipoKey = $("f-tipo").value, t = D.tipos[tipoKey];
     var area = parseFloat($("f-area").value);
     var n = parseInt($("f-pisos").value, 10);
@@ -225,9 +275,68 @@
   }
   function irrTxt(k) { return { regular: "Regular", leve: "Leve", marcada: "Marcada" }[k]; }
 
+  var THEAD_AREA = "<tr><th scope='col'>Piso</th><th scope='col' class='n'>Área (m²)</th><th scope='col' class='n'>kg/m² cons.</th><th scope='col' class='n'>Peso cons. (kg)</th></tr>";
+  var THEAD_MAST = "<tr><th scope='col'>Elemento</th><th scope='col' class='n'>Altura (m)</th><th scope='col' class='n'>kg/und cons.</th><th scope='col' class='n'>Peso cons. (kg)</th></tr>";
+
+  function textoUbicacion(r) {
+    return r.ciudad.nombre + (r.ciudad.dep && r.ciudad.dep !== "Otras capitales" ? ", " + r.ciudad.dep : "") +
+      " (Aa " + fmtN2.format(r.ciudad.aa) + ", Av " + fmtN2.format(r.ciudad.av) + ", viento " + r.V + " km/h)";
+  }
+
+  function pintarMastil(r) {
+    $("r-total").textContent = fmtCOP.format(r.total);
+    $("r-total-det").textContent = "Diseño del tipo de " + r.m.nombre.toLowerCase() + " de " + fmtN1.format(r.H) + " m" +
+      (r.inclCim ? (r.cimIncl ? ", con cimentación incluida en su plan." : ", con cimentación a tarifa preferencial.") : ", sin cimentación.");
+    var dl = $("r-filas-diseno"); dl.innerHTML = "";
+    fila(dl, "Diseño estructural del tipo (fuste, placa base y pernos)", fmtCOP.format(r.valorDis));
+    if (r.inclCim) fila(dl, "Diseño de cimentación", r.cimIncl ? "Incluida (" + r.cimRest + " disponible" + (r.cimRest === 1 ? "" : "s") + ")" : fmtCOP.format(r.valorCim));
+    fila(dl, "Subtotal", fmtCOP.format(r.valor));
+    fila(dl, "IVA " + Math.round(D.plan.iva * 100) + " %", fmtCOP.format(r.iva));
+    fila(dl, "Total", fmtCOP.format(r.total), "total");
+    var elA = $("r-ahorro"); elA.className = "ahorro";
+    if (r.inclCim && !r.cimIncl) {
+      elA.className = "ahorro alerta";
+      elA.textContent = "Ya usó las cimentaciones incluidas este mes: esta se liquida a tarifa preferencial. Tarifa de lista: " + fmtCOP.format(r.listaTotal) + " con IVA.";
+    } else {
+      elA.textContent = "Ahorro frente a tarifa de lista (" + fmtCOP.format(r.listaTotal) + " con IVA): " + fmtCOP.format(Math.max(0, r.listaTotal - r.total)) + ".";
+    }
+    $("r-material").textContent = "Acero estructural estimado";
+    $("r-ton").textContent = (r.kgCons >= 1000 ? fmtN1.format(r.kgCons / 1000) + " t" : fmtN0.format(r.kgCons) + " kg");
+    $("r-ton-det").textContent = "Peso conservador de " + fmtN0.format(r.N) + " unidad" + (r.N === 1 ? "" : "es") + " · esperado " + (r.kgEsp >= 1000 ? fmtN1.format(r.kgEsp / 1000) + " t" : fmtN0.format(r.kgEsp) + " kg");
+    $("r-esp").textContent = fmtN0.format(r.esp) + " kg/und";
+    $("r-cons").textContent = fmtN0.format(r.cons) + " kg/und";
+    $("r-thead").innerHTML = THEAD_MAST;
+    var tb = document.querySelector("#r-tabla-pisos tbody"); tb.innerHTML = "";
+    var tr = document.createElement("tr");
+    tr.innerHTML = "<td>" + esc(r.m.nombre) + "</td><td class='n'>" + fmtN1.format(r.H) + "</td><td class='n'>" + fmtN0.format(r.cons) + "</td><td class='n'>" + fmtN0.format(r.cons) + "</td>";
+    tb.appendChild(tr);
+    var tf = document.querySelector("#r-tabla-pisos tfoot"); if (tf) tf.remove();
+    tf = document.createElement("tfoot");
+    tf.innerHTML = "<tr><td>Total (" + fmtN0.format(r.N) + " und)</td><td class='n'></td><td class='n'>" + fmtN0.format(r.cons) + "</td><td class='n'>" + fmtN0.format(r.kgCons) + "</td></tr>";
+    $("r-tabla-pisos").appendChild(tf);
+    var fx = $("r-factores"); fx.innerHTML = "";
+    fila(fx, "Peso de referencia a 18 m con viento de 100 km/h", fmtN0.format(r.m.ref18 * 1000) + " kg");
+    fila(fx, "Ajuste por altura (" + fmtN1.format(r.H) + " m)", "× " + fmtN2.format(r.fH));
+    fila(fx, "Factor de viento (" + r.V + " km/h)", "× " + fmtN2.format(r.fW));
+    fila(fx, "Factor sísmico (A = " + fmtN2.format(r.A) + ")", "× " + fmtN2.format(r.fS));
+    fila(fx, "Margen conservador para presupuesto", "× " + fmtN2.format(r.m.cons));
+    var txt = "Hola NMH, solicito predimensionamiento (Estructura Ágil)." +
+      "\nSuscriptor: " + D.acceso.suscriptor + (r.nombre ? "\nProyecto: " + r.nombre : "") +
+      "\nUbicación: " + textoUbicacion(r) +
+      "\nTipo: " + r.m.nombre + " de " + fmtN1.format(r.H) + " m · " + r.N + " unidad(es)" +
+      "\nCimentación: " + (r.inclCim ? "sí" : "no") +
+      "\nEstimado app: " + fmtN0.format(r.cons) + " kg por unidad (conservador)";
+    $("btn-predim").href = "https://wa.me/" + D.contacto.whatsapp + "?text=" + encodeURIComponent(txt);
+    var b = $("btn-registrar");
+    b.disabled = false; b.classList.remove("ok"); b.dataset.paso = "";
+    b.textContent = r.cimIncl ? "Registrar diseño y descontar cimentación" : "Registrar diseño";
+  }
+
   function pintarResultado(r) {
     ultimo = r;
     $("res-vacio").hidden = true; $("res-lleno").hidden = false;
+    if (r.mastil) { pintarMastil(r); return; }
+    $("r-thead").innerHTML = THEAD_AREA;
 
     // Diseño
     $("r-total").textContent = r.total === 0 ? "Incluido en su cupo" : fmtCOP.format(r.total);
@@ -303,7 +412,7 @@
     $("txt-suscriptor").textContent = D.acceso.suscriptor + " · " + D.acceso.plan;
     var rest = Math.max(0, D.plan.cupoM2Eq - estado.consumido);
     $("txt-cupo").textContent = fmtN0.format(rest) + " m² eq disponibles";
-    $("txt-cupo-det").textContent = fmtN0.format(estado.consumido) + " de " + fmtN0.format(D.plan.cupoM2Eq) + " m² eq usados este mes";
+    $("txt-cupo-det").textContent = fmtN0.format(estado.consumido) + " de " + fmtN0.format(D.plan.cupoM2Eq) + " m² eq usados en " + MESES[d.getMonth()] + " · no acumulable";
     var pc = Math.min(100, estado.consumido / D.plan.cupoM2Eq * 100);
     $("barra-cupo-fill").style.width = pc + "%";
     $("barra-cupo").setAttribute("aria-valuenow", Math.round(pc));
@@ -314,6 +423,12 @@
     $("barra-predim-fill").style.width = pp + "%";
     $("barra-predim").setAttribute("aria-valuenow", Math.round(pp));
     $("barra-predim").classList.toggle("agotada", prest <= 0);
+    var crest = Math.max(0, D.plan.cimentaciones - estado.cim);
+    $("txt-cim").textContent = crest + " de " + D.plan.cimentaciones;
+    var pcm = Math.min(100, estado.cim / D.plan.cimentaciones * 100);
+    $("barra-cim-fill").style.width = pcm + "%";
+    $("barra-cim").setAttribute("aria-valuenow", Math.round(pcm));
+    $("barra-cim").classList.toggle("agotada", crest <= 0);
     $("txt-tarifa").textContent = fmtCOP.format(D.plan.tarifaSuscriptor) + "/m²";
     $("txt-tarifa-det").textContent = "Lista " + fmtCOP.format(D.plan.tarifaLista) + "/m² · valores antes de IVA";
     pintarHistorial();
@@ -324,7 +439,7 @@
     estado.historial.slice().reverse().forEach(function (h) {
       var li = document.createElement("li");
       var s1 = document.createElement("span"); s1.textContent = h.desc;
-      var s2 = document.createElement("span"); s2.textContent = h.predim ? "Ficha" : (h.m2 ? fmtN0.format(h.m2) + " m² eq" : "");
+      var s2 = document.createElement("span"); s2.textContent = h.predim ? "Ficha" : (h.cim ? "Cimentación" : (h.m2 ? fmtN0.format(h.m2) + " m² eq" : ""));
       var sm = document.createElement("small"); sm.textContent = h.fecha + (h.valor ? " · excedente " + fmtCOP.format(h.valor) + " + IVA" : "");
       li.appendChild(s1); li.appendChild(s2); li.appendChild(sm); ul.appendChild(li);
     });
@@ -335,7 +450,15 @@
     if (!ultimo) return;
     if (b.dataset.paso !== "confirmar") {
       b.dataset.paso = "confirmar";
-      b.textContent = "Confirmar: descontar " + fmtN0.format(ultimo.consumo) + " m² eq";
+      b.textContent = ultimo.mastil ? (ultimo.cimIncl ? "Confirmar: descontar 1 cimentación" : "Confirmar registro")
+        : "Confirmar: descontar " + fmtN0.format(ultimo.consumo) + " m² eq";
+      return;
+    }
+    if (ultimo.mastil) {
+      if (ultimo.cimIncl) estado.cim += 1;
+      estado.historial.push({ fecha: hoyTxt(), desc: "Diseño registrado · " + (ultimo.nombre || ultimo.m.nombre + " de " + fmtN1.format(ultimo.H) + " m") + ", " + ultimo.ciudad.nombre, m2: 0, valor: ultimo.valor, cim: ultimo.cimIncl });
+      guardarEstado(); pintarCupo();
+      b.textContent = "Diseño registrado"; b.classList.add("ok"); b.disabled = true; b.dataset.paso = "";
       return;
     }
     estado.consumido += ultimo.consumo;
@@ -358,6 +481,7 @@
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   $("btn-imprimir").addEventListener("click", function () {
     var r = ultimo; if (!r) return;
+    if (r.mastil) { imprimirMastil(r); window.print(); return; }
     var f = r.fecha, num = "CR-" + f.getFullYear() + String(f.getMonth() + 1).padStart(2, "0") + String(f.getDate()).padStart(2, "0") + "-" + String(f.getHours()).padStart(2, "0") + String(f.getMinutes()).padStart(2, "0");
     var pisosRows = r.filas.slice().reverse().map(function (x) {
       return "<tr><td>" + (r.n === 1 ? "Único" : "Piso " + x.piso) + "</td><td class='n'>" + fmtN0.format(x.area) + "</td><td class='n'>" + fmtN1.format(x.kgm2) + "</td><td class='n'>" + fmtN0.format(x.kg) + "</td></tr>";
@@ -387,6 +511,49 @@
       "<p class='pie-imp'>NMH ENGINEERING S.A.S. · Barranquilla, Atlántico · Contacto: +57 301 797 2967</p>";
     window.print();
   });
+
+  function numCot(f) { return "CR-" + f.getFullYear() + String(f.getMonth() + 1).padStart(2, "0") + String(f.getDate()).padStart(2, "0") + "-" + String(f.getHours()).padStart(2, "0") + String(f.getMinutes()).padStart(2, "0"); }
+  function imprimirMastil(r) {
+    var f = r.fecha;
+    $("impresion").innerHTML =
+      "<div class='cab'><img src='../assets/img/logo-nmh-azul.png' alt='NMH Engineering'><div><strong>NMH ENGINEERING S.A.S.</strong><br>NIT 901.892.933-1<br>Estructura Ágil · " + esc(numCot(f)) + "<br>" + f.toLocaleDateString("es-CO", { day: "numeric", month: "long", year: "numeric" }) + "</div></div>" +
+      "<h1>Cotización preliminar de diseño estructural</h1><p>Suscriptor: " + esc(D.acceso.suscriptor) + " · " + esc(D.acceso.plan) + (r.nombre ? " · Proyecto: " + esc(r.nombre) : "") + "</p>" +
+      "<h2>1. Datos del proyecto</h2><table><tbody>" +
+      "<tr><td>Ubicación</td><td>" + esc(r.ciudad.nombre + (r.ciudad.dep && r.ciudad.dep !== "Otras capitales" ? ", " + r.ciudad.dep : "")) + "</td></tr>" +
+      "<tr><td>Amenaza sísmica (NSR-10)</td><td>Aa = " + fmtN2.format(r.ciudad.aa) + " · Av = " + fmtN2.format(r.ciudad.av) + " · Zona " + r.zona.toLowerCase() + "</td></tr>" +
+      "<tr><td>Velocidad básica de viento</td><td>" + r.V + " km/h (valor de referencia)</td></tr>" +
+      "<tr><td>Tipo de estructura</td><td>" + esc(r.m.nombre) + " de " + fmtN1.format(r.H) + " m</td></tr>" +
+      "<tr><td>Unidades</td><td>" + fmtN0.format(r.N) + "</td></tr></tbody></table>" +
+      "<h2>2. Valor del diseño estructural</h2><table><thead><tr><th>Concepto</th><th>Valor</th></tr></thead><tbody>" +
+      "<tr><td>Diseño estructural del tipo (fuste, placa base y pernos)</td><td class='n'>" + fmtCOP.format(r.valorDis) + "</td></tr>" +
+      (r.inclCim ? "<tr><td>Diseño de cimentación</td><td class='n'>" + (r.cimIncl ? "Incluida en el plan" : fmtCOP.format(r.valorCim)) + "</td></tr>" : "") +
+      "<tr><td>Subtotal</td><td class='n'>" + fmtCOP.format(r.valor) + "</td></tr>" +
+      "<tr><td>IVA " + Math.round(D.plan.iva * 100) + " %</td><td class='n'>" + fmtCOP.format(r.iva) + "</td></tr>" +
+      "<tr><td><strong>Total</strong></td><td class='n'><strong>" + fmtCOP.format(r.total) + "</strong></td></tr></tbody></table>" +
+      "<h2>3. Acero estructural estimado (conservador)</h2><table><thead><tr><th>Elemento</th><th>Altura (m)</th><th>kg por unidad</th><th>Peso total (kg)</th></tr></thead><tbody>" +
+      "<tr><td>" + esc(r.m.nombre) + "</td><td class='n'>" + fmtN1.format(r.H) + "</td><td class='n'>" + fmtN0.format(r.cons) + "</td><td class='n'>" + fmtN0.format(r.kgCons) + "</td></tr></tbody></table>" +
+      "<p class='nota'>Peso esperado: " + fmtN0.format(r.esp) + " kg por unidad. Peso conservador para presupuesto: " + fmtN0.format(r.cons) + " kg por unidad.</p>" +
+      "<p class='nota'><strong>Alcance.</strong> Estimado preliminar de orden de magnitud (±25 %) generado por el cotizador Estructura Ágil para la preparación de propuestas. No reemplaza el diseño estructural conforme a la NSR-10 y a la ANSI/TIA-222 cuando aplique, que NMH Engineering S.A.S. entrega firmado por ingeniero civil con matrícula profesional. El diseño de cimentación requiere parámetros geotécnicos del sitio. Valores en pesos colombianos.</p>" +
+      "<p class='pie-imp'>NMH ENGINEERING S.A.S. · Barranquilla, Atlántico · Contacto: +57 301 797 2967</p>";
+  }
+
+  function pintarMastiles() {
+    var tb = document.querySelector("#tabla-mastiles tbody"); tb.innerHTML = "";
+    ["poste", "monopolo"].forEach(function (k) {
+      var m = D.mastiles[k];
+      D.mastiles.referencias.forEach(function (H) {
+        var celdas = [100, 130].map(function (V) {
+          var esp = m.ref18 * Math.pow(H / 18, m.k) * Math.pow(V / 100, 2 * m.vie) * 1000;
+          return "<td class='n'><strong>" + fmtN0.format(esp) + "</strong><span>" + fmtN0.format(esp * m.cons) + "</span></td>";
+        }).join("");
+        var tr = document.createElement("tr");
+        tr.innerHTML = "<td>" + esc(m.nombre) + " de " + H + " m</td>" + celdas +
+          "<td class='n'><strong>" + fmtCOP.format(m.disenoSus) + "</strong><span>" + fmtCOP.format(m.disenoLista) + "</span></td>" +
+          "<td class='n'><strong>" + fmtCOP.format(m.cimSus) + "</strong><span>" + fmtCOP.format(m.cimLista) + "</span></td>";
+        tb.appendChild(tr);
+      });
+    });
+  }
 
   /* ---------- tabla de tenores ---------- */
   function pintarTenores() {
@@ -427,7 +594,7 @@
   /* ---------- arranque ---------- */
   poblarCiudades(); poblarViento($("f-viento")); poblarViento($("t-viento")); poblarTipos();
   $("t-viento").value = "130";
-  alCambiarCiudad(); alCambiarTipo(); pintarTenores();
+  alCambiarCiudad(); alCambiarTipo(); pintarTenores(); pintarMastiles();
   $("f-ciudad").addEventListener("change", alCambiarCiudad);
   $("f-aa").addEventListener("input", function () { pintarAmenaza(ciudadSel()); });
   $("f-av").addEventListener("input", function () { pintarAmenaza(ciudadSel()); });
